@@ -6,6 +6,8 @@ import router from './router'
 
 const app = createApp(App)
 
+export let urlBase = "http://localhost:8088"
+
 app.use(router)
 
 app.mount('#app')
