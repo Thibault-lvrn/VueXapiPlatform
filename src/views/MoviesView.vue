@@ -24,7 +24,9 @@ fetchMovie();
     <h2>Movies</h2>
     <ul>
       <li v-for="film in films['hydra:member']" :key="film.id">
-        <MovieCard :film="film" v-if="film" />
+        <router-link :to="{ name: 'FicheMovie', params: { id: film.id } }">
+          <MovieCard :film="film" v-if="film" />
+        </router-link>
       </li>
     </ul>
   </div>
