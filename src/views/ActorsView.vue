@@ -26,9 +26,9 @@ fetchActors();
     <h2>Actors</h2>
     <ul>
       <li v-for="actor in actors['hydra:member']" :key="actor.id">
-        <!-- {{ actor.lastName }}
-        {{ actor.firstName }} -->
-        <ActorCard :actor="actor" v-if="actor" />
+        <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+          <ActorCard :actor="actor" v-if="actor" />
+        </router-link>
       </li>
     </ul>
   </div>
