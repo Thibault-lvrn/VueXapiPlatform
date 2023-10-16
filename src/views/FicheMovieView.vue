@@ -28,7 +28,9 @@ onMounted(async () => {
       <MovieCard :film="filmInfo" v-if="filmInfo" />
       
       <h3>La Catégorie du film : </h3>
-      <p>{{ filmInfo.category.name }}</p>
+      <router-link :to="{ name: 'FicheCategory', params: { id: filmInfo.category.id } }">
+        <p>{{ filmInfo.category.name }}</p>
+      </router-link>
 
       <h3>Les Acteurs du film : </h3>
       <ul v-for="actor in filmInfo.Actors" :key="film">
@@ -40,7 +42,7 @@ onMounted(async () => {
         </router-link>
       </ul>
       
-      <!-- <router-link :to="{ name: 'FicheMovie', params: { id: 201 } }">
+      <!-- <router-link :key="id" :to="{ name: 'FicheMovie', params: { id: 201 } }">
         <li>
           bonjour
         </li>
