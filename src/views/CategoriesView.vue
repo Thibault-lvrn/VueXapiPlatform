@@ -30,15 +30,16 @@ fetchActors();
     <h2>Categories</h2>
     <ul>
       <li v-if="categories" v-for="categorie in categories['hydra:member']" :key="categorie.id">
-        {{ categorie.name }}
+        <router-link :to="{ name: 'FicheCategory', params: { id: categorie.id } }">
+          {{ categorie.name }}
+        </router-link>
         <ul>
           <li v-for="film in categorie.movies" :key="film.id">
-            <MovieCard :film="film" v-if="film" />
-             <!-- {{ film }} -->
-            <!-- <pre>{{ film }}</pre> -->
+            <router-link :to="{ name: 'FicheMovie', params: { id: film.id } }">
+              <MovieCard :film="film" v-if="film" />
+            </router-link>
           </li>
         </ul>
-        <!-- {{ categorie.movies }} -->
       </li>
     </ul>
   </div>

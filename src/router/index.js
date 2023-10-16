@@ -50,6 +50,11 @@ const router = createRouter({
       path: '/FicheActor/:id',
       name: 'FicheActor',
       component: () => import('../views/FicheActorView.vue')
+    },
+    {
+      path: '/FicheCategory/:id',
+      name: 'FicheCategory',
+      component: () => import('../views/FicheCategoryView.vue')
     }
   ]
 })
