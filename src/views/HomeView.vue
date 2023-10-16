@@ -8,14 +8,13 @@ let films = ref([]);
 let actors = ref([]);
 
 const fetchMovies = async () => {
-  const response = await fetch('http://localhost:8088/S5-TD1/index.php/api/movies?page=1');
+  const response = await fetch(`${urlBase}/S5-TD1/index.php/api/movies?page=1`);
   films.value = await response.json();
   const sortedFilms = films.value['hydra:member'].sort((a, b) => {
     return new Date(b.releaseDate) - new Date(a.releaseDate);
   });
   const latestFilms = sortedFilms.slice(0, 4);
   films.value = latestFilms;
-  console.log(latestFilms);
 }
 
 fetchMovies();
@@ -46,7 +45,9 @@ fetchActors();
     <h2>Latest Movies</h2>
     <ul>
       <li v-for="film in films" :key="film.id">
-        <MovieCard :film="film" v-if="film" />
+        <router-link :to="{ name: 'FicheMovie', params: { id: film.id } }">
+          <MovieCard :film="film" v-if="film" />
+        </router-link>
       </li>
     </ul>
   </div>
@@ -55,7 +56,9 @@ fetchActors();
     <h2>Actors</h2>
     <ul>
       <li v-for="actor in actors" :key="actor.id">
-        <ActorCard :actor="actor" v-if="actor" />
+        <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+          <ActorCard :actor="actor" v-if="actor" />
+        </router-link>
       </li>
     </ul>
   </div>
