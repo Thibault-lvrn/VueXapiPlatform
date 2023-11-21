@@ -20,10 +20,10 @@ fetchMovie();
     <h1>This is the Movies page</h1>
   </div>
 
-  <div class="actors">
+  <div class="movies">
     <h2>Movies</h2>
     <ul>
-      <li v-for="film in films['hydra:member']" :key="film.id">
+      <li class="card" v-for="film in films['hydra:member']" :key="film.id">
         <router-link :to="{ name: 'FicheMovie', params: { id: film.id } }">
           <MovieCard :film="film" v-if="film" />
         </router-link>

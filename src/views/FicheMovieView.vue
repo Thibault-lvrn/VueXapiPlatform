@@ -22,7 +22,7 @@ onMounted(async () => {
     <h1>This is the info page</h1>
   </div>
 
-  <div class="actors">
+  <div class="movies">
     <h2>Hello Movies</h2>
     <div v-if="filmInfo">
       <MovieCard :film="filmInfo" v-if="filmInfo" />
