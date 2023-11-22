@@ -55,6 +55,11 @@ const router = createRouter({
       path: '/FicheCategory/:id',
       name: 'FicheCategory',
       component: () => import('../views/FicheCategoryView.vue')
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/LoginView.vue')
     }
   ]
 })
