@@ -45,7 +45,7 @@ function login(e) {
   });
 }
 
-</script>Crabiche%1
+</script>
 
 <template>
   <div class="about">
