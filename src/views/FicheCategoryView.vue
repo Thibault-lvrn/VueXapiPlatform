@@ -12,7 +12,7 @@ let categoryInfo = ref('')
 onMounted(async () => {
   const id = route.params.id
   console.log(id)
-  const response = await fetch(`${urlBase}/S5-TD1/index.php/api/categories/${id}`);
+  const response = await fetch(`${urlBase}/api/categories/${id}`);
   categoryInfo.value = await response.json()
   console.log(categoryInfo)
 })

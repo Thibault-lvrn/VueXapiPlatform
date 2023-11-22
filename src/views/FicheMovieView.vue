@@ -1,4 +1,4 @@
-<script setup>
+src/assets/form.css<script setup>
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -11,7 +11,7 @@ let filmInfo = ref('')
 onMounted(async () => {
   const id = route.params.id
   console.log(id)
-  const response = await fetch(`${urlBase}/S5-TD1/index.php/api/movies/${id}`);
+  const response = await fetch(`${urlBase}/api/movies/${id}`);
   filmInfo.value = await response.json()
   console.log(filmInfo)
 })
