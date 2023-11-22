@@ -6,7 +6,7 @@ import { urlBase } from '@/main.js';
 let actors = ref([]);
 
 const fetchActors = async () => {
-  const response = await fetch(`${urlBase}/S5-TD1/index.php/api/actors?page=1`);
+  const response = await fetch(`${urlBase}/api/actors?page=1`);
   actors.value = await response.json();
   console.log(actors);
 }

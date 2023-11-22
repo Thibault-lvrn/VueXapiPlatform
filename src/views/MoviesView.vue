@@ -6,7 +6,7 @@ import { urlBase } from '@/main.js';
 let films = ref([]);
 
 const fetchMovie = async () => {
-  const response = await fetch(`${urlBase}/S5-TD1/index.php/api/movies?page=1`);
+  const response = await fetch(`${urlBase}/api/movies?page=1`);
   films.value = await response.json();
   console.log(films);
 }
