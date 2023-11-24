@@ -1,0 +1,7 @@
+.pagination {
+  margin: 4rem 0;
+}
+
+.pagination .active {
+  background-color: rgb(42, 42, 42);
+}
