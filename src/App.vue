@@ -22,6 +22,7 @@ const logout = () => {
   user.value = '';
 };
 
+
 const extractUserName = () => {
   let emailInput = user.value;
   let regexPattern = /([^@]+)(?:@([^\.]+)\.)?(.*)/;
