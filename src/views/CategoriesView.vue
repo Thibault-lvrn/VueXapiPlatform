@@ -5,13 +5,12 @@ import { urlBase } from '@/main.js';
 
 let categories = ref([]);
 
-const fetchActors = async () => {
+const fetchCategories = async () => {
   const response = await fetch(`${urlBase}/api/categories?page=1`);
   categories.value = await response.json();
 }
 
-fetchActors();
-
+fetchCategories();
 </script>
 
 <template>
@@ -29,9 +28,9 @@ fetchActors();
           </router-link>
         </h3>
         <ul>
-          <li class="card" v-for="film in categorie.movies" :key="film.id">
-            <router-link :to="{ name: 'FicheMovie', params: { id: film.id } }">
-              <MovieCard :film="film" v-if="film" />
+          <li class="card" v-for="movie in categorie.movies" :key="movie.id">
+            <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
+              <MovieCard :movie="movie" v-if="movie" />
             </router-link>
           </li>
         </ul>

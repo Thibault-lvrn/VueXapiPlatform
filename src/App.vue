@@ -5,12 +5,14 @@ import { useRouter } from 'vue-router';
 
 const isAuthenticated = ref(false);
 const user = ref(localStorage.getItem('username') || '');
+const username = ref('');
 let showLoginLink = ref(true);
 
 const checkToken = () => {
   const token = localStorage.getItem('token');
   isAuthenticated.value = !!token;
   user.value = localStorage.getItem('user') || '';
+  extractUserName();
 };
 
 const logout = () => {
@@ -20,6 +22,16 @@ const logout = () => {
   user.value = '';
 };
 
+const extractUserName = () => {
+  let emailInput = user.value;
+  let regexPattern = /([^@]+)(?:@([^\.]+)\.)?(.*)/;
+  let match = emailInput.match(regexPattern);
+
+  if (match) {
+      username.value = match[1];      // Tout avant le @
+      console.log(username.value)
+  }
+}
 
 onMounted(() => {
   checkToken();
@@ -38,11 +50,8 @@ router.beforeEach((to, from, next) => {
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper navigation">
-      <!-- <HelloWorld msg="You did it!" /> -->
-
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/movies">Movies</RouterLink>
@@ -51,20 +60,9 @@ router.beforeEach((to, from, next) => {
       </nav>
       
       <div class="secondary-nav">
-        <!-- <template v-if="!showLogin">
-          <p class="logout">{{ user }}</p>
-        </template>
-        <template v-if="showLogin">
-          <RouterLink to="/login">Login</RouterLink>
-        </template>
-        <template v-if="!showLogin">
-          <button @click="logout()">Logout</button>
-        </template> -->
-        <!-- <button @click="test()">test</button>
-        <p v-text="showLogin"></p> -->
         <router-link v-if="!isAuthenticated" class="link-nav-menu" to="/login">Login</router-link>
-        <router-link v-if="isAuthenticated" @click="logout" class="link-nav-menu" to="/">Logout</router-link>
-        <router-link v-if="isAuthenticated" class="link-nav-menu" to="/account">{{user}}</router-link>
+        <RouterLink v-if="isAuthenticated" @click="logout" class="link-nav-menu" to="/">Logout</RouterLink>
+        <RouterLink v-if="isAuthenticated" class="link-nav-menu" to="/account">{{username}}</RouterLink>
       </div>
     </div>
   </header>
