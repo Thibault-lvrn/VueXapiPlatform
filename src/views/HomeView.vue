@@ -44,9 +44,16 @@ fetchActors();
     <h2>Latest Movies</h2>
     <ul>
       <li class="card" v-for="movie in movies" :key="movie.id">
-        <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
+        <div class="card-content">
           <MovieCard :movie="movie" v-if="movie" />
-        </router-link>
+          <div class="card-footer">
+            <button>
+              <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
+                Voir plus
+              </router-link>
+            </button>
+          </div>
+        </div>
       </li>
     </ul>
   </div>
@@ -55,9 +62,16 @@ fetchActors();
     <h2>Actors</h2>
     <ul>
       <li class="card" v-for="actor in actors" :key="actor.id">
-        <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+        <div class="card-content">
           <ActorCard :actor="actor" v-if="actor" />
-        </router-link>
+          <div class="card-footer">
+            <button>
+              <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+                Voir plus
+              </router-link>
+            </button>
+          </div>
+        </div>
       </li>
     </ul>
   </div>

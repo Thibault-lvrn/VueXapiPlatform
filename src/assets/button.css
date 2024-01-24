@@ -7,3 +7,10 @@ button {
   cursor: pointer;
   transition: 0.4s;
 }
+
+
+button.secondary {
+  background-color: transparent;
+  border: 2px solid hsla(160, 100%, 37%, 1);
+  color: white;
+}

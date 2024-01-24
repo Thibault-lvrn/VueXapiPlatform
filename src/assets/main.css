@@ -8,7 +8,7 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-
+  padding-bottom: 8rem;
   font-weight: normal;
 }
 
@@ -40,9 +40,8 @@ a,
   min-width: 200px;
 }
 
-.card > a {
+.card > .card-content {
   background-color: rgb(42, 42, 42);
-  color: white;
   padding: 30px;
   border-radius: 8px;
   width: 100%;
@@ -50,6 +49,11 @@ a,
   flex-direction: column;
   justify-content: center;
   text-align: center;
+  height: 100%;
+}
+
+.card a {  
+  color: white;
 }
 
 ul li {
@@ -65,9 +69,5 @@ ul li {
 @media (min-width: 1024px) {
   body {
     place-items: center;
-  }
-
-  #app {
-    padding: 0 2rem;
   }
 }
