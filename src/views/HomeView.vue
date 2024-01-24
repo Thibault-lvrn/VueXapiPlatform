@@ -5,32 +5,30 @@ import ActorCard from '@/components/ActorCard.vue';
 import { urlBase } from '@/main.js';
 import moment from 'moment';
 
-let films = ref([]);
+let movies = ref([]);
 let actors = ref([]);
 
 const fetchMovies = async () => {
-  const response = await fetch(`${urlBase}/api/movies?page=1`);
-  films.value = await response.json();
-  const sortedFilms = films.value['hydra:member'].sort((a, b) => {
+  console.log(`${urlBase}/api/movies?page=1`)
+  const response = await fetch(`${urlBase}/api/movies?page=1&itemsPerPage=5`);
+  movies.value = await response.json();
+  const sortedmovies = movies.value['hydra:member'].sort((a, b) => {
     return new Date(b.releaseDate) - new Date(a.releaseDate);
   });
-  const latestFilms = sortedFilms.slice(0, 4);
-  films.value = latestFilms;
+  const latestmovies = sortedmovies.slice(0, 4);
+  movies.value = latestmovies;
 }
 
 fetchMovies();
 
 const fetchActors = async () => {
-  const response = await fetch(`${urlBase}/WRA506/index.php/api/actors?page=1`);
+  const response = await fetch(`${urlBase}/api/actors?page=1&itemsPerPage=5`);
   actors.value = await response.json();
-  console.log('hello', actors);
   const sortedActors = actors.value['hydra:member'].sort((a, b) => {
     return b.id - a.id;
   });
   const latestActors = sortedActors.slice(0, 4);
-  console.log('latest',latestActors)
   actors.value = latestActors;
-  console.log('hello', actors);
 }
 
 fetchActors();
@@ -45,9 +43,9 @@ fetchActors();
   <div class="movies">
     <h2>Latest Movies</h2>
     <ul>
-      <li class="card" v-for="film in films" :key="film.id">
-        <router-link :to="{ name: 'FicheMovie', params: { id: film.id } }">
-          <MovieCard :film="film" v-if="film" />
+      <li class="card" v-for="movie in movies" :key="movie.id">
+        <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
+          <MovieCard :movie="movie" v-if="movie" />
         </router-link>
       </li>
     </ul>

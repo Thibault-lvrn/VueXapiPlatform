@@ -26,21 +26,13 @@ onMounted(async () => {
   <div class="actors">
     <h2>Hello {{ categoryInfo.name }}</h2>
     <div>
-      <!-- <ActorCard :actor="categoryInfo" v-if="categoryInfo" /> -->
-      <li v-for="film in categoryInfo.movies" :key="film.id">
-        <router-link :to="{ name: 'FicheMovie', params: { id: film.id } }">
-          <MovieCard :film="film" v-if="film" />
-        </router-link>
-          <!-- {{ film }} -->
-        <!-- <pre>{{ film }}</pre> -->
-      </li>
-      <!-- <ul v-for="movie in categoryInfo.movies" :key="actor">
-        <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
-          <li>
-            {{ movie.title }}
-          </li>
-        </router-link>
-      </ul> -->
+      <ul>
+        <li v-for="movie in categoryInfo.movies" :key="movie.id">
+          <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
+            <MovieCard :movie="movie" v-if="movie" />
+          </router-link>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
