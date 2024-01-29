@@ -13,6 +13,7 @@ const lastPageUrl = ref("");
 const loading = ref(false);
 const modalOpen = ref(false);
 const movie = ref({});
+const movieDate = ref({});
 
 const fetchMovie = async (page) => {
   if (page) {
@@ -22,8 +23,6 @@ const fetchMovie = async (page) => {
   try {
     const response = await axios.get(`${urlBase}/api/movies?page=${pageNumber.value}&itemsPerPage=${itemsPerPage.value}`);
     movies.value = response.data;
-//    const newmovies = response.data['hydra:member'];
-//    movies.value.splice(0, movies.value.length, ...newmovies);
     lastPageUrl.value = movies.value['hydra:view']["hydra:last"];
     getNumberOfPages();
   } catch (error) {
@@ -77,9 +76,10 @@ const closeModal = (id) => {
 
 onMounted(() => {
   fetchMovie();
+  console.log(movie)
 });
 
-const submitForm = async (id) => {
+const submitForm = async (id, title, description, releaseDate) => {
   event.preventDefault();
 
   const myHeaders = {
@@ -88,9 +88,9 @@ const submitForm = async (id) => {
   };
 
   const data = {
-    title: movie.title,
-    description: movie.description,
-    releaseDate: movie.releaseDate
+    title: title,
+    description: description,
+    releaseDate: releaseDate
   };
 
   const requestOptions = {
@@ -101,66 +101,20 @@ const submitForm = async (id) => {
   };
 
   try {
+    console.log("data envoyé", data)
     const response = await axios(requestOptions);
-    console.log(response.data);
+    console.log(response)
   } catch (error) {
     console.error('error', error);
+    error.log(error);
   }
 };
-
 </script>
-<!-- <script>
-export default {
-  data() {
-    return {
-      movie: {
-        title: '',
-        description: '',
-        releaseDate: '',
-        // Add other form fields here
-      }
-    };
-  },
-  methods: {
-    submitForm(id) {
-      event.preventDefault();
-      // Use formData in your Axios request
-      const myHeaders = {
-        'Content-Type': 'application/merge-patch+json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      };
-
-      // Define data
-      const data = {
-        title: this.movie.title,
-        description: this.movie.description,
-        releaseDate: this.movie.releaseDate
-      };
-      // Define Axios request configuration
-      const requestOptions = {
-        method: 'patch', // Note that HTTP methods are lowercase in Axios
-        url: `http://localhost:8088/WRA506/index.php/api/movies/${id}`,
-        headers: myHeaders,
-        data: data,
-      };
-
-      // Make the Axios request
-      const response = axios(requestOptions)
-        console.log(response)
-        .then(response => console.log(response.data))
-        .catch(error => console.error('error', error));
-    },
-  },
-};
-</script> -->
 
 <template>
-  <div class="about">
-    <h1>This is the Movies page</h1>
-  </div>
+  <h1>Movies page</h1>
 
   <div class="movies">
-    <h2>Movies</h2>
     <div>
       <ul class="pagination">
         <button @click="previousPage()">&lt;</button>
@@ -196,13 +150,22 @@ export default {
             <div class="modal-body">
               <h2>Modifier le film</h2>
               <form>
-                <label for="title">Titre</label>
-                <input type="text" id="title" name="title" v-model="movie.title">
-                <label for="description">Description</label>
-                <textarea type="textarea" id="description" name="description" v-model="movie.description"></textarea>
-                <label for="releaseDate" >Date de sortie</label>
-                <input type="date" id="releaseDate" name="releaseDate" v-model="movie.releaseDate">
-                <button v-on:click="submitForm(movie.id)">Modifier</button>
+                <div class="form-input">
+                  <label for="title">Titre</label>
+                  <input type="text" id="title" name="title" v-model="movie.title">
+                </div>
+                <div class="form-input">
+                  <label for="description">Description</label>
+                  <textarea type="textarea" id="description" name="description" v-model="movie.description" ></textarea>
+                  <!-- <pre>{{movie}}</pre> -->
+                  
+                </div>
+                <div class="form-input">
+                  <label for="releaseDate" >Date de sortie</label>
+                  <input type="date" id="releaseDate" name="releaseDate" v-model="movie.releaseDate">
+                  <!-- <input type="date" id="releaseDate" name="releaseDate" v-model="movieDate"> -->
+                </div>
+                <button v-on:click="submitForm(movie.id, movie.title, movie.description, movie.releaseDate)">A CHANGER</button>
               </form>
             </div>
           </div>
@@ -221,6 +184,20 @@ export default {
   gap: 10px;
   margin-top: 20px;
   height: 100%;
+}
+
+.pagination .active {
+  background-color: rgb(58, 58, 58);;
+  color: white;
+}
+
+.form-input {
+  width: 100%;
+} 
+
+.form-input  label {
+  display: block;
+  width: 100%;
 }
 
 @media (min-width: 1024px) {

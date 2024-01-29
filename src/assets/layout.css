@@ -31,7 +31,7 @@
 
 .modal-content {
   background-color: rgb(42, 42, 42);
-  width: 50%;
+  width: 80%;
   padding: 40px;
   position: relative;
 }
@@ -52,7 +52,6 @@
   flex-direction: column;
   justify-content: center;
   text-align: center;
-  overflow-y: scroll;
 }
 
 .modal-body h2 {
@@ -65,8 +64,17 @@
   text-align: left;
 }
 
+@media (min-width: 720px) {
+  .modal-content {
+    width: 70%;
+  }
+}
+
 @media (min-width: 1024px) {
   #app {
     padding: 0 2rem 12.5rem 2rem 12rem;
+  }
+  .modal-content {
+    width: 50%;
   }
 }
