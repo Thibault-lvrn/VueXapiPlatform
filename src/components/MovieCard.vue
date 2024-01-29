@@ -1,8 +1,10 @@
 <script setup>
+import DateFormatter from '@/components/DateFormatter.vue'; // Assurez-vous de spécifier le chemin correct
+
 defineProps({
   movie: {
     type: String,
-    required: true
+    required: true,
   }
 })
 </script>
@@ -11,5 +13,5 @@ defineProps({
     <br>
     <span v-if="movie">{{ movie.description }}</span>
     <br>
-    <span v-if="movie">{{ movie.releaseDate }}</span>
+    <span v-if="movie">{{ DateFormatter.methods.formatDateFR(movie.releaseDate) }}</span>
 </template>
