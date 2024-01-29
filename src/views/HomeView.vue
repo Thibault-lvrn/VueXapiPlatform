@@ -9,7 +9,6 @@ let movies = ref([]);
 let actors = ref([]);
 
 const fetchMovies = async () => {
-  console.log(`${urlBase}/api/movies?page=1`)
   const response = await fetch(`${urlBase}/api/movies?page=1&itemsPerPage=5`);
   movies.value = await response.json();
   const sortedmovies = movies.value['hydra:member'].sort((a, b) => {
@@ -36,12 +35,9 @@ fetchActors();
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the Home page</h1>
-  </div>
+  <h1>Home page</h1>
 
   <div class="movies">
-    <h2>Latest Movies</h2>
     <ul>
       <li class="card" v-for="movie in movies" :key="movie.id">
         <div class="card-content">

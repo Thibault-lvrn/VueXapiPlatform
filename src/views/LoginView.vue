@@ -8,14 +8,14 @@ let router = useRouter(); // Use the useRouter function to get the router instan
 let username = ref('');
 let password = ref('');
 let loading = ref(false);
+const isError = ref(false);
 
 function login(e) {
   e.preventDefault();
+
+  isError.value = false;
   
   loading.value = true;
-
-  console.log(username.value)
-  console.log(password.value)
 
   let data = JSON.stringify({
     "username": username.value,
@@ -38,23 +38,19 @@ function login(e) {
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('user', username.value);
     router.push('/')
-    alert('Login successful');
   })
   .catch((error) => {
     loading.value = false;
-    alert('Login failed');
+    isError.value = true;
   });
 }
 
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the Login page</h1>
-  </div>
+  <h1>Login page</h1>
 
   <div class="category">
-    <h2>Login</h2>
     <div class="category_container">
       <form  @submit.prevent="login">
         <input type="email" name="mail" placeholder="mail" v-model="username" required>
@@ -67,8 +63,9 @@ function login(e) {
             <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
           </template>
         </button>
-        <!-- <template v-if="loading"> -->
-        <!-- </template> -->
+        <template v-if="isError">
+            <span style="color: red;">Le mail ou le mot de passe est incorrect</span>
+        </template>
       </form>
     </div>
   </div>

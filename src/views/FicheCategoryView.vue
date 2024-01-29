@@ -11,20 +11,15 @@ let categoryInfo = ref('')
 
 onMounted(async () => {
   const id = route.params.id
-  console.log(id)
   const response = await fetch(`${urlBase}/api/categories/${id}`);
   categoryInfo.value = await response.json()
-  console.log(categoryInfo)
 })
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the info page</h1>
-  </div>
+  <h1>info page</h1>
 
   <div class="actors">
-    <h2>Hello {{ categoryInfo.name }}</h2>
     <div>
       <ul>
         <li v-for="movie in categoryInfo.movies" :key="movie.id">

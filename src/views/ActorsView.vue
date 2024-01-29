@@ -8,7 +8,6 @@ let actors = ref([]);
 const fetchActors = async () => {
   const response = await fetch(`${urlBase}/api/actors?page=1`);
   actors.value = await response.json();
-  console.log(actors);
 }
 
 fetchActors();
@@ -16,14 +15,9 @@ fetchActors();
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the Actors page</h1>
-  </div>
-
-  <pre>{{ actors.member }}</pre>
+  <h1>Actors page</h1>
 
   <div class="actors">
-    <h2>Actors</h2>
     <ul>
       <li class="card" v-for="actor in actors['hydra:member']" :key="actor.id">
         <div class="card-content">

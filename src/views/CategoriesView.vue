@@ -14,12 +14,9 @@ fetchCategories();
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the Categories page</h1>
-  </div>
-
+  <h1>Categories page</h1>
+  
   <div class="category">
-    <h2>Categories</h2>
     <div>
       <div v-if="categories" v-for="categorie in categories['hydra:member']" :key="categorie.id">
         <h3>
@@ -29,9 +26,16 @@ fetchCategories();
         </h3>
         <ul>
           <li class="card" v-for="movie in categorie.movies" :key="movie.id">
-            <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
+            <div class="card-content">
               <MovieCard :movie="movie" v-if="movie" />
-            </router-link>
+              <div class="card-footer">
+                <button>
+                  <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
+                    Voir plus
+                  </router-link>  
+                </button>
+              </div>
+            </div>
           </li>
         </ul>
       </div>

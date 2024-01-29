@@ -10,20 +10,15 @@ let actorInfo = ref('')
 
 onMounted(async () => {
   const id = route.params.id
-  console.log(id)
   const response = await fetch(`${urlBase}/api/actors/${id}`);
   actorInfo.value = await response.json()
-  console.log(actorInfo)
 })
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the info page</h1>
-  </div>
+  <h1>info page</h1>
 
   <div class="actors">
-    <h2>Hello Actor</h2>
     <div>
       <ActorCard :actor="actorInfo" v-if="actorInfo" />
 

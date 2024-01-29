@@ -30,7 +30,6 @@ const extractUserName = () => {
 
   if (match) {
       username.value = match[1];      // Tout avant le @
-      console.log(username.value)
   }
 }
 
