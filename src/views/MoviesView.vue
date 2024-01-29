@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import MovieCard from '@/components/MovieCard.vue';
 import { urlBase } from '@/main.js';
-import { onMounted } from 'vue';
 import axios from 'axios';
+import DateFormatter from '@/components/DateFormatter.vue';
 
 const movies = ref([]);
 const pageNumber = ref(parseInt(localStorage.getItem('moviePageNumber')) || 1);
@@ -13,7 +13,7 @@ const lastPageUrl = ref("");
 const loading = ref(false);
 const modalOpen = ref(false);
 const movie = ref({});
-const movieDate = ref({});
+const movieDate = ref('2023-04-11');
 
 const fetchMovie = async (page) => {
   if (page) {
@@ -76,39 +76,74 @@ const closeModal = (id) => {
 
 onMounted(() => {
   fetchMovie();
-  console.log(movie)
 });
+</script>
 
-const submitForm = async (id, title, description, releaseDate) => {
-  event.preventDefault();
+<script>
+export default {
+  components: {
+    DateFormatter,
+  },
+  data() {
+    return {
+      formTitle: "",
+      formDescription: "",
+      formReleaseDate: "",
+    };
+  },
+  methods: {
+    updateFormTitle(event) {
+      this.formTitle = event.target.value;
+    },
+    updateFormDescription(event) {
+      this.formDescription = event.target.value;
+    },
+    updateFormReleaseDate(event) {
+      this.formReleaseDate = event.target.value;
+    },
+    async submitForm(id) {
+      event.preventDefault();
 
-  const myHeaders = {
-    'Content-Type': 'application/merge-patch+json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-  };
+      const title = this.formTitle;
+      const description = this.formDescription;
+      const releaseDate = this.formReleaseDate;
 
-  const data = {
-    title: title,
-    description: description,
-    releaseDate: releaseDate
-  };
+      const myHeaders = {
+        'Content-Type': 'application/merge-patch+json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      };
 
-  const requestOptions = {
-    method: 'patch',
-    url: `${urlBase}/api/movies/${id}`,
-    headers: myHeaders,
-    data: data,
-  };
+      const data = {};
 
-  try {
-    console.log("data envoyé", data)
-    const response = await axios(requestOptions);
-    console.log(response)
-  } catch (error) {
-    console.error('error', error);
-    error.log(error);
-  }
+      if (title !== '') {
+        data.title = title;
+      }
+
+      if (description !== '') {
+        data.description = description;
+      }
+
+      if (releaseDate !== '') {
+        data.releaseDate = releaseDate;
+      }
+
+      const requestOptions = {
+        method: 'patch',
+        url: `${urlBase}/api/movies/${id}`,
+        headers: myHeaders,
+        data: data,
+      };
+
+      try {
+        const response = await axios(requestOptions);
+        window.location.reload()
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
 };
+
 </script>
 
 <template>
@@ -131,6 +166,7 @@ const submitForm = async (id, title, description, releaseDate) => {
       
       <li class="card" v-for="movie in movies['hydra:member']" :key="movie.id">
         <div class="card-content">
+
           <MovieCard :movie="movie" v-if="movie" />
           <div class="card-footer">
             <button v-on:click="openModal(movie.id)">Modifier</button>
@@ -152,20 +188,18 @@ const submitForm = async (id, title, description, releaseDate) => {
               <form>
                 <div class="form-input">
                   <label for="title">Titre</label>
-                  <input type="text" id="title" name="title" v-model="movie.title">
+                  <input type="text" id="title" name="title" :value="movie.title" @input="updateFormTitle">
                 </div>
                 <div class="form-input">
                   <label for="description">Description</label>
-                  <textarea type="textarea" id="description" name="description" v-model="movie.description" ></textarea>
-                  <!-- <pre>{{movie}}</pre> -->
+                  <textarea type="textarea" id="description" name="description" :value="movie.description" @input="updateFormDescription"></textarea>
                   
                 </div>
                 <div class="form-input">
                   <label for="releaseDate" >Date de sortie</label>
-                  <input type="date" id="releaseDate" name="releaseDate" v-model="movie.releaseDate">
-                  <!-- <input type="date" id="releaseDate" name="releaseDate" v-model="movieDate"> -->
+                  <input type="date" id="releaseDate" name="releaseDate" :value="DateFormatter.methods.formatDateEN(movie.releaseDate)" @input="updateFormReleaseDate">
                 </div>
-                <button v-on:click="submitForm(movie.id, movie.title, movie.description, movie.releaseDate)">A CHANGER</button>
+                <button @click="submitForm(movie.id)">Modifier</button>
               </form>
             </div>
           </div>
