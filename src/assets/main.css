@@ -44,6 +44,7 @@ a,
 .card > .card-content {
   background-color: rgb(42, 42, 42);
   padding: 30px;
+  padding-top: 40px;
   border-radius: 8px;
   width: 100%;
   display: flex;

@@ -31,9 +31,25 @@
 
 .modal-content {
   background-color: rgb(42, 42, 42);
+  border-radius: 10px;
+  border: 2px solid hsla(160, 100%, 37%, 1);
   width: 80%;
   padding: 40px;
   position: relative;
+}
+
+.modal-content:not(.modal-content-remove) {
+  height: 85vh;
+}
+
+.modal-content p {
+  margin-bottom: 20px;
+}
+
+.modal-content .btns {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .modal-content .close {
@@ -50,8 +66,8 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   text-align: center;
+  overflow-y: scroll;
 }
 
 .modal-body h2 {
@@ -62,6 +78,43 @@
 .modal-body label {
   width: 100%;
   text-align: left;
+}
+
+.click-outsise {
+  background: transparent;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+}
+
+.card_gesture {
+  opacity: 0;
+  transition: 0.1s all ease;
+}
+
+.card:hover .card_gesture {
+  opacity: 1;
+}
+
+.card-content {
+  position: relative;
+}
+
+.card_gesture {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 5px;
+}
+
+.remove,
+.edit {
+  padding: 0;
+  height: 27px;
+  width: 27px;
+  font-size: 20px;
 }
 
 @media (min-width: 720px) {
