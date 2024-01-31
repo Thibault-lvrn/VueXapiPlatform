@@ -13,9 +13,6 @@ const pageNumber = ref(parseInt(localStorage.getItem('moviePageNumber')) || 1);
 const itemsPerPage = ref(9);
 const numberOfPages = ref('');
 const lastPageUrl = ref("");
-const loading = ref(false);
-const modalOpen = ref(false);
-const movie = ref({});
 
 const fetchMovie = async (page) => {
   if (page) {
