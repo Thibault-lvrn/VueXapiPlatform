@@ -11,6 +11,7 @@ defineProps({
 <template>
     <span v-if="movie">{{ movie.title }}</span>
     <br>
+    
     <span v-if="movie">{{ movie.description }}</span>
     <br>
     <span v-if="movie">{{ DateFormatter.methods.formatDateFR(movie.releaseDate) }}</span>

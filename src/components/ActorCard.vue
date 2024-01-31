@@ -6,7 +6,14 @@ defineProps({
   }
 })
 </script>
-<template>
-    <span v-if="actor">{{ actor.lastName }}</span>
-    <span v-if="actor">{{ actor.firstName }}</span>
+<template v-if="actor">
+    <div>
+      <span>{{ actor.firstName }}</span>
+      &nbsp;
+      <span>{{ actor.lastName }}</span>
+    </div>
+    <div>
+      <span>Nationalitée : </span>
+      <span>{{ actor.nationality.name }}</span>
+    </div>
 </template>
