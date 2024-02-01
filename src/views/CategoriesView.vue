@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import MovieCard from '@/components/MovieCard.vue';
+import MovieCard from '@/components/Card/MovieCard.vue';
 import { urlBase } from '@/main.js';
 
 let categories = ref([]);

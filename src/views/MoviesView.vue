@@ -1,29 +1,31 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import MovieCard from '@/components/MovieCard.vue';
-import { urlBase } from '@/main.js';
+import {ref, onMounted} from 'vue';
+import MovieCard from '@/components/Card/MovieCard.vue';
+import {urlBase} from '@/main.js';
 import axios from 'axios';
-import DateFormatter from '@/components/DateFormatter.vue';
-import AddMovie from '@/components/AddMovie.vue';
-import RemoveMovie from '@/components/RemoveMovie.vue';
-import UpdateMovie from '@/components/UpdateMovie.vue';
+import DateFormatter from '@/components/entityManager/DateFormatter.vue';
+import AddMovie from '@/components/entityManager/AddMovie.vue';
+import RemoveMovie from '@/components/entityManager/RemoveMovie.vue';
+import UpdateMovie from '@/components/entityManager/UpdateMovie.vue';
 
 const movies = ref([]);
 const pageNumber = ref(parseInt(localStorage.getItem('moviePageNumber')) || 1);
 const itemsPerPage = ref(9);
 const numberOfPages = ref('');
-const lastPageUrl = ref("");
+const lastPageUrl = ref('');
+const isLoading = ref(true);
 
 const fetchMovie = async (page) => {
   if (page) {
     pageNumber.value = page;
   }
-
   try {
-    const response = await axios.get(`${urlBase}/api/movies?page=${pageNumber.value}&itemsPerPage=${itemsPerPage.value}`);
+    const response = await axios.get(
+        `${urlBase}/api/movies?page=${pageNumber.value}&itemsPerPage=${itemsPerPage.value}`);
     movies.value = response.data;
-    lastPageUrl.value = movies.value['hydra:view']["hydra:last"];
+    lastPageUrl.value = movies.value['hydra:view']['hydra:last'];
     getNumberOfPages();
+    isLoading.value = false;
   } catch (error) {
     console.error(error);
   }
@@ -32,7 +34,7 @@ const fetchMovie = async (page) => {
 const getNumberOfPages = async () => {
   const dernierChiffre = lastPageUrl.value.match(/\d+$/);
   numberOfPages.value = dernierChiffre ? parseInt(dernierChiffre[0], 10) : 0;
-}
+};
 
 const nextPage = () => {
   if (pageNumber.value >= numberOfPages.value) {
@@ -42,7 +44,7 @@ const nextPage = () => {
     localStorage.setItem('moviePageNumber', pageNumber.value);
   }
   fetchMovie();
-}
+};
 
 const previousPage = () => {
   if (pageNumber.value <= 1) {
@@ -52,7 +54,7 @@ const previousPage = () => {
     localStorage.setItem('moviePageNumber', pageNumber.value);
   }
   fetchMovie();
-}
+};
 
 onMounted(() => {
   fetchMovie();
@@ -71,38 +73,42 @@ const uploadFile = async (file) => {
     const response = await axios.post('http://localhost:8088/WRA506/index.php/api/media_objects', formData, {
       headers: headers,
     });
-
-    console.log(response.data);
   } catch (error) {
     console.error('Erreur lors de la requête:', error);
   }
-}
+};
 </script>
 
 <template>
   <h1>Movies page</h1>
-
   <div class="movies">
     <div>
       <ul class="pagination">
-        <button @click="previousPage()">&lt;</button>
-        <templat v-for="page in numberOfPages">
-          <button :class="{ active: pageNumber === page }" @click="fetchMovie(page)">
+        <button class="pagination_btn" @click="previousPage()">&lt;</button>
+        <template v-for="page in numberOfPages">
+          <button class="pagination_btn" :class="{ active: pageNumber === page }" @click="fetchMovie(page)">
             <span>{{ page }}</span>
           </button>
-        </templat>
-        <button @click="nextPage()">></button>
+        </template>
+        <button class="pagination_btn" @click="nextPage()">></button>
       </ul>
     </div>
     <div class="addMovie">
-      <button @click="AddMovie.methods.openModalAdd()">Ajouter un film</button>
+      <div>
+        <button @click="AddMovie.methods.openModalAdd()">Ajouter un film</button>
+      </div>
+    </div>
+
+    <div v-if="isLoading">
+      Chargement...
     </div>
     <ul>
-      
+
       <li class="card" v-for="movie in movies['hydra:member']" :key="movie.id">
         <div class="card-content">
 
-          <MovieCard :movie="movie" v-if="movie" />
+          <MovieCard :movie="movie" v-if="movie"/>
+
           <div class="card-footer">
             <button>
               <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
@@ -110,16 +116,20 @@ const uploadFile = async (file) => {
               </router-link>
             </button>
             <div class="card_gesture">
-              <button class="edit material-symbols-outlined" v-on:click="UpdateMovie.methods.openModalEdit(movie.id)">edit</button>
-              <button class="remove material-symbols-outlined" v-on:click="RemoveMovie.methods.openModalRemove(movie.id)">delete</button>
+              <button class="edit material-symbols-outlined" v-on:click="UpdateMovie.methods.openModalEdit(movie.id)">
+                edit
+              </button>
+              <button class="remove material-symbols-outlined"
+                      v-on:click="RemoveMovie.methods.openModalRemove(movie.id)">delete
+              </button>
             </div>
           </div>
         </div>
 
         <!-- modifications modals -->
-        <UpdateMovie :movie="movie" />
-        <RemoveMovie :movieId="movie.id" />
-        <AddMovie />
+        <UpdateMovie :movie="movie"/>
+        <RemoveMovie :movieId="movie.id"/>
+        <AddMovie/>
         <!-- end -->
 
       </li>
@@ -149,9 +159,9 @@ const uploadFile = async (file) => {
 
 .form-input {
   width: 100%;
-} 
+}
 
-.form-input  label {
+.form-input label {
   display: block;
   width: 100%;
 }

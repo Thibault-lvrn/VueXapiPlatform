@@ -3,7 +3,7 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { urlBase } from '@/main.js';
-import ActorCard from '@/components/ActorCard.vue';
+import ActorCard from '@/components/Card/ActorCard.vue';
 
 const route = useRoute()
 let actorInfo = ref('')

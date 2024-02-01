@@ -3,7 +3,7 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { urlBase } from '@/main.js';
-import MovieCard from '@/components/MovieCard.vue';
+import MovieCard from '@/components/Card/MovieCard.vue';
 
 const route = useRoute()
 let categoryInfo = ref('')
@@ -23,15 +23,14 @@ onMounted(async () => {
       <ul>
         <li class="card" v-for="movie in categoryInfo.movies" :key="movie.id">
           <div class="card-content">
-            <pre>{{movie}}</pre>
             <MovieCard :movie="movie" v-if="movie" />
             
             <div class="card-footer">
+              <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
               <button>
-                <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
                   Voir plus
-                </router-link>
-              </button>
+                </button>
+              </router-link>
             </div>
           </div>
         </li>

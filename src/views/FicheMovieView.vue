@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { urlBase } from '@/main.js';
-import MovieCard from '@/components/MovieCard.vue';
+import MovieCard from '@/components/Card/MovieCard.vue';
 
 const route = useRoute();
 let movieInfo = ref('');

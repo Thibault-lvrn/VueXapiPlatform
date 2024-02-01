@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import ActorCard from '@/components/ActorCard.vue';
+import ActorCard from '@/components/Card/ActorCard.vue';
 import { urlBase } from '@/main.js';
 
 let actors = ref([]);
@@ -23,11 +23,11 @@ fetchActors();
         <div class="card-content">
           <ActorCard :actor="actor" v-if="actor" />
           <div class="card-footer">
-            <button>
-              <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+            <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+              <button>
                 Voir plus
-              </router-link>
-            </button>
+              </button>
+            </router-link>
           </div>
         </div>
       </li>

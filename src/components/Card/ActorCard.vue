@@ -1,7 +1,7 @@
 <script setup>
 defineProps({
   actor: {
-    type: String,
+    type: Object,
     required: true
   }
 })

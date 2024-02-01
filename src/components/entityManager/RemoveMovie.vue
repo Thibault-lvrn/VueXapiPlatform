@@ -1,6 +1,10 @@
 <script>
 import { urlBase } from '@/main.js';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
 export default {
   props: {
     movieId: {
@@ -34,23 +38,17 @@ export default {
     async deleteMovie(id) {
       const url = `${urlBase}/api/movies/${id}`;
       const headers = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       };
-      const data = {
-        username: ` ${localStorage.getItem('user')}`,
-        password: `${localStorage.getItem('token')}`
-      };
-
       axios.delete(url, {
         headers: headers,
-        data: data
       })
       .then(response => {
         window.location.reload()
-        console.log(response.data);
       })
       .catch(error => {
-        console.error('Error:', error);
+        router.push('/login')
       });
     },
   },

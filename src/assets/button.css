@@ -8,6 +8,10 @@ button {
   transition: 0.4s;
 }
 
+button:not(.pagination_btn) {
+  width: 100%;
+}
+
 
 button.secondary {
   background-color: transparent;

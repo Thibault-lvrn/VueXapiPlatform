@@ -2,9 +2,9 @@
 import axios from 'axios'
 import { urlBase } from '@/main.js';
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'; // Import the useRouter function
+import { useRouter } from 'vue-router';
 
-let router = useRouter(); // Use the useRouter function to get the router instance
+let router = useRouter();
 let username = ref('');
 let password = ref('');
 let loading = ref(false);

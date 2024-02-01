@@ -2,7 +2,6 @@
 export default {
   methods: {
     closeModalAdd() {
-      console.log("test")
     },
     openModalAdd() {
       const modals = document.querySelectorAll('.modal');

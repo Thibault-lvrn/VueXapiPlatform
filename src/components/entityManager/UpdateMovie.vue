@@ -1,7 +1,12 @@
 <script setup>
 import { urlBase } from '@/main.js';
 import axios from 'axios';
-import DateFormatter from '@/components/DateFormatter.vue';
+import DateFormatter from '@/components/entityManager/DateFormatter.vue';
+import { useRouter } from 'vue-router';
+import { resolveDirective } from 'vue';
+
+const router = useRouter();
+
 </script>
 <script>
 export default {
@@ -20,7 +25,6 @@ export default {
   },
   methods: {
     openModalEdit(id) {
-      console.log('bonjour')
       const modals = document.querySelectorAll('.modal');
       const body = document.querySelector(`body`);
 
@@ -87,9 +91,12 @@ export default {
 
       try {
         const response = await axios(requestOptions);
-        window.location.reload()
+
+        //lancer la fonction test()
+        console.log(this.count)
+
       } catch (error) {
-        console.error(error);
+        // window.location.reload()
       }
     },
   },
@@ -105,6 +112,7 @@ export default {
       </div>
       <div class="modal-body">
         <h2>Modifier le film</h2>
+        <button @click="test()">test</button>
         <form>
           <div class="form-input">
             <label for="title">Titre</label>
