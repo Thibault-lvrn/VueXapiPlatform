@@ -1,3 +1,6 @@
+<script setup>
+const token = localStorage.getItem('token');
+</script>
 <script>
 export default {
   methods: {
@@ -36,46 +39,56 @@ export default {
         <span class="close" v-on:click="closeModalAdd()">&times;</span>
       </div>
       <div class="modal-body">
-        <h2>Ajouter un film</h2>
-        <form>
-          <div class="form-input">
-            <label for="title">Titre</label>
-            <input type="text" id="title" name="title" @input="updateFormAddDescription">
+        <template v-if="token">
+          <h2>Ajouter un film</h2>
+          <form>
+            <div class="form-input">
+              <label for="title">Titre</label>
+              <input type="text" id="title" name="title" @input="updateFormAddDescription">
+            </div>
+            <div class="form-input">
+              <label for="description">Description</label>
+              <textarea type="textarea" id="description" name="description" @input="updateFormAddDescription"></textarea>
+            </div>
+            <div class="form-input">
+              <label for="releaseDate" >Date de sortie</label>
+              <input type="date" id="releaseDate" name="releaseDate" @input="updateFormAddreleaseDate">
+            </div>
+            <div class="form-input">
+              <label for="duration" >Durée du film</label>
+              <input type="number" id="duration" name="duration" @input="updateFormAddDuration">
+            </div>
+            <div class="form-input">
+              <label for="notation" >Note</label>
+              <input type="text" id="notation" name="notation" @input="updateFormAddNotation">
+            </div>
+            <div class="form-input">
+              <label for="entries">Nombres d'entrées</label>
+              <input type="number" id="entries" name="entries" @input="updateFormAddDescription">
+            </div>
+            <div class="form-input">
+              <label for="budget">Budget</label>
+              <input type="budget" id="budget" name="budget" @input="updateFormAddBudget">
+            </div>
+            <div class="form-input">
+              <label for="director">Directeur</label>
+              <input type="text" id="director" name="director" @input="updateFormAddDirector">
+            </div>
+            <div class="form-input">
+              <label for="director">Image</label>
+              <input type="file" id="director" name="director" @input="updateFormAddDirector">
+            </div>
+            <button @click="addMovie(movie.id)">Ajouter</button>
+          </form>
+        </template>
+        <template v-if="!token">
+          <div>
+            <h3>Vous devez être connecté pour ajouter un film</h3>
+            <router-link to="/login">
+            <button>Se connecter</button>
+            </router-link>
           </div>
-          <div class="form-input">
-            <label for="description">Description</label>
-            <textarea type="textarea" id="description" name="description" @input="updateFormAddDescription"></textarea>
-          </div>
-          <div class="form-input">
-            <label for="releaseDate" >Date de sortie</label>
-            <input type="date" id="releaseDate" name="releaseDate" @input="updateFormAddreleaseDate">
-          </div>
-          <div class="form-input">
-            <label for="duration" >Durée du film</label>
-            <input type="number" id="duration" name="duration" @input="updateFormAddDuration">
-          </div>
-          <div class="form-input">
-            <label for="notation" >Note</label>
-            <input type="text" id="notation" name="notation" @input="updateFormAddNotation">
-          </div>
-          <div class="form-input">
-            <label for="entries">Nombres d'entrées</label>
-            <input type="number" id="entries" name="entries" @input="updateFormAddDescription">
-          </div>
-          <div class="form-input">
-            <label for="budget">Budget</label>
-            <input type="budget" id="budget" name="budget" @input="updateFormAddBudget">
-          </div>
-          <div class="form-input">
-            <label for="director">Directeur</label>
-            <input type="text" id="director" name="director" @input="updateFormAddDirector">
-          </div>
-          <div class="form-input">
-            <label for="director">Image</label>
-            <input type="file" id="director" name="director" @input="updateFormAddDirector">
-          </div>
-          <button @click="addMovie(movie.id)">Ajouter</button>
-        </form>
+        </template>
       </div>
     </div>
     <div class="click-outsise" @click="closeModalAdd()"></div>

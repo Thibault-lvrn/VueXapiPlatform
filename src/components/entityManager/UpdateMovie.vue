@@ -5,7 +5,7 @@ import DateFormatter from '@/components/entityManager/DateFormatter.vue';
 import { useRouter } from 'vue-router';
 import { resolveDirective } from 'vue';
 
-const router = useRouter();
+const token = localStorage.getItem('token');
 
 </script>
 <script>
@@ -92,11 +92,10 @@ export default {
       try {
         const response = await axios(requestOptions);
 
-        //lancer la fonction test()
-        console.log(this.count)
+        window.location.reload()
 
       } catch (error) {
-        // window.location.reload()
+        console.error(error);
       }
     },
   },
@@ -111,23 +110,32 @@ export default {
         <span class="close" v-on:click="closeModal(movie.id)">&times;</span>
       </div>
       <div class="modal-body">
-        <h2>Modifier le film</h2>
-        <button @click="test()">test</button>
-        <form>
-          <div class="form-input">
-            <label for="title">Titre</label>
-            <input type="text" id="title" name="title" :value="movie.title" @input="updateFormTitle">
+        <template v-if="token">
+          <h2>Modifier le film</h2>
+          <form>
+            <div class="form-input">
+              <label for="title">Titre</label>
+              <input type="text" id="title" name="title" :value="movie.title" @input="updateFormTitle">
+            </div>
+            <div class="form-input">
+              <label for="description">Description</label>
+              <textarea type="textarea" id="description" name="description" :value="movie.description" @input="updateFormDescription"></textarea>
+            </div>
+            <div class="form-input">
+              <label for="releaseDate" >Date de sortie</label>
+              <input type="date" id="releaseDate" name="releaseDate" :value="DateFormatter.methods.formatDateEN(movie.releaseDate)" @input="updateFormReleaseDate">
+            </div>
+            <button @click="submitForm(movie.id)">Modifier</button>
+          </form>
+        </template>
+        <template v-if="!token">
+          <div>
+            <h3>Vous devez être connecté pour modifier un film</h3>
+            <router-link to="/login">
+            <button>Se connecter</button>
+            </router-link>
           </div>
-          <div class="form-input">
-            <label for="description">Description</label>
-            <textarea type="textarea" id="description" name="description" :value="movie.description" @input="updateFormDescription"></textarea>
-          </div>
-          <div class="form-input">
-            <label for="releaseDate" >Date de sortie</label>
-            <input type="date" id="releaseDate" name="releaseDate" :value="DateFormatter.methods.formatDateEN(movie.releaseDate)" @input="updateFormReleaseDate">
-          </div>
-          <button @click="submitForm(movie.id)">Modifier</button>
-        </form>
+        </template>
       </div>
     </div>
     <div class="click-outsise" @click="closeModal(movie.id)"></div>

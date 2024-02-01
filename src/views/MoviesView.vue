@@ -99,14 +99,12 @@ const uploadFile = async (file) => {
       </div>
     </div>
 
-    <div v-if="isLoading">
-      Chargement...
-    </div>
     <ul>
-
-      <li class="card" v-for="movie in movies['hydra:member']" :key="movie.id">
+      <div v-if="isLoading">
+        Chargement...
+      </div>
+      <li v-if="!isLoading" class="card" v-for="movie in movies['hydra:member']" :key="movie.id">
         <div class="card-content">
-
           <MovieCard :movie="movie" v-if="movie"/>
 
           <div class="card-footer">
@@ -138,15 +136,6 @@ const uploadFile = async (file) => {
 </template>
 
 <style>
-
-.card-footer {
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-  height: 100%;
-}
 
 .pagination {
   margin-bottom: 60px;

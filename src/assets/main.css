@@ -52,6 +52,20 @@ a,
   color: white;
 }
 
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  height: 100%;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+}
+
 ul li {
   list-style-type: none;
 }

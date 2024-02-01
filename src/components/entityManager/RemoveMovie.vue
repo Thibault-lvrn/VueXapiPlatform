@@ -3,7 +3,7 @@ import { urlBase } from '@/main.js';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
+const token = localStorage.getItem('token');
 
 export default {
   props: {
@@ -48,7 +48,7 @@ export default {
         window.location.reload()
       })
       .catch(error => {
-        router.push('/login')
+        console.error(error);
       });
     },
   },
@@ -62,11 +62,21 @@ export default {
         <span class="close" v-on:click="closeModalRemove(movieId)">&times;</span>
       </div>
       <div class="modal-body">
-        <p>Etes vous sûr de vouloir supprimer le film</p>
-        <div class="btns">
-          <button @click="deleteMovie(movieId)">Oui</button>
-          <button @click="closeModalRemove(movieId)">Non</button>
-        </div>
+        <template v-if="token">
+          <p>Etes vous sûr de vouloir supprimer le film</p>
+          <div class="btns">
+            <button @click="deleteMovie(movieId)">Oui</button>
+            <button @click="closeModalRemove(movieId)">Non</button>
+          </div>
+        </template>
+        <template v-if="!token">
+          <div>
+            <h3>Vous devez être connecté pour supprimer un film</h3>
+            <router-link to="/login">
+            <button>Se connecter</button>
+            </router-link>
+          </div>
+        </template>
       </div>
     </div>
     <div class="click-outsise" @click="closeModalRemove(movieId)"></div>
