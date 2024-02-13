@@ -103,34 +103,11 @@ const uploadFile = async (file) => {
       <div v-if="isLoading">
         Chargement...
       </div>
-      <li v-if="!isLoading" class="card" v-for="movie in movies['hydra:member']" :key="movie.id">
-        <div class="card-content">
-          <MovieCard :movie="movie" v-if="movie"/>
-
-          <div class="card-footer">
-            <button>
-              <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
-                Voir plus
-              </router-link>
-            </button>
-            <div class="card_gesture">
-              <button class="edit material-symbols-outlined" v-on:click="UpdateMovie.methods.openModalEdit(movie.id)">
-                edit
-              </button>
-              <button class="remove material-symbols-outlined"
-                      v-on:click="RemoveMovie.methods.openModalRemove(movie.id)">delete
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- modifications modals -->
-        <UpdateMovie :movie="movie"/>
-        <RemoveMovie :movieId="movie.id"/>
-        <AddMovie/>
-        <!-- end -->
-
-      </li>
+      <ul>
+        <li class="card card-movie" v-if="!isLoading" v-for="movie in movies['hydra:member']" :key="movie.id">
+          <MovieCard :movie="movie" callerComponent="MoviesView" v-if="movie"/>
+        </li>
+      </ul>
     </ul>
   </div>
 </template>
