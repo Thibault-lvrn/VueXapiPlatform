@@ -3,14 +3,19 @@ import { urlBase } from '@/main.js';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
-const token = localStorage.getItem('token');
-
 export default {
   props: {
     movieId: {
       type: Number,
       required: true,
     },
+  },
+  setup() {
+    const token = localStorage.getItem('token');
+
+    return {
+      token,  
+    };
   },
   methods: {
     openModalRemove(id) {
