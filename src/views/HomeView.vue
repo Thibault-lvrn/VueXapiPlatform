@@ -27,7 +27,6 @@ const fetchMovies = async () => {
     movies.value = latestmovies;
   } catch (error) {
     console.error('An error occurred while fetching movies:', error);
-    // Handle error or set isLoading.value to false in case of error
     isLoading.value = false;
   }
 }
@@ -50,7 +49,6 @@ const fetchActors = async () => {
 
   } catch (error) {
     console.error('An error occurred while fetching actors:', error);
-    // Handle error or set isLoading.value to false in case of error
     isLoading.value = false;
   }
 }
@@ -70,17 +68,8 @@ onMounted(() => {
       <div v-if="isLoading">
         Chargement...
       </div>
-      <li class="card" v-for="movie in movies" :key="movie.id">
-        <div class="card-content">
-          <MovieCard :movie="movie" v-if="movie" />
-          <div class="card-footer">
-            <button>
-              <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
-                Voir plus
-              </router-link>
-            </button>
-          </div>
-        </div>
+      <li class="card card-movie" v-for="movie in movies" :key="movie.id">
+          <MovieCard :movie="movie" callerComponent="HomeView" v-if="movie" />
       </li>
     </ul>
   </div>

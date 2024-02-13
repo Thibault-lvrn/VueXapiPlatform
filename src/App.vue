@@ -29,7 +29,7 @@ const extractUserName = () => {
   let match = emailInput.match(regexPattern);
 
   if (match) {
-      username.value = match[1];      // Tout avant le @
+      username.value = match[1];
   }
 }
 

@@ -18,7 +18,6 @@ const fetchActors = async () => {
     isLoading.value = false;
   } catch (error) {
     console.error('An error occurred while fetching actors:', error);
-    // Handle error or set isLoading.value to false in case of error
     isLoading.value = false;
   }
 }

@@ -19,7 +19,6 @@ const fetchCategories = async () => {
 
   } catch (error) {
     console.error('An error occurred while fetching categories:', error);
-    // Handle error or set isLoading.value to false in case of error
     isLoading.value = false;
   }
 }
@@ -46,17 +45,8 @@ onMounted(fetchCategories);
           <div v-if="isLoading">
             Chargement...
           </div>
-          <li v-if="!isLoading" class="card" v-for="movie in categorie.movies" :key="movie.id">
-            <div class="card-content">
-              <MovieCard :movie="movie" v-if="movie" />
-              <div class="card-footer">
-                <button>
-                  <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
-                    Voir plus
-                  </router-link>  
-                </button>
-              </div>
-            </div>
+          <li v-if="!isLoading" class="card card-movie" v-for="movie in categorie.movies" :key="movie.id">
+            <MovieCard :movie="movie" callerComponent="CategoriesView" v-if="movie" />
           </li>
         </ul>
       </div>
