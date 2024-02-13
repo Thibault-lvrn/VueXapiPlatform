@@ -21,18 +21,8 @@ onMounted(async () => {
   <div class="actors">
     <div>
       <ul>
-        <li class="card" v-for="movie in categoryInfo.movies" :key="movie.id">
-          <div class="card-content">
-            <MovieCard :movie="movie" v-if="movie" />
-            
-            <div class="card-footer">
-              <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
-              <button>
-                  Voir plus
-                </button>
-              </router-link>
-            </div>
-          </div>
+        <li class="card card-movie" v-for="movie in categoryInfo.movies" :key="movie.id">
+          <MovieCard :movie="movie" callerComponent="CategoriesView" v-if="movie" />
         </li>
       </ul>
     </div>

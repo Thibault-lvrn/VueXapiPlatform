@@ -15,21 +15,31 @@ onMounted(async () => {
 })
 </script>
 
-<template>
-  <h1>info page</h1>
+<template v-if="actorInfo">
+  <h1>{{ actorInfo.firstName }} {{ actorInfo.lastName }}</h1>
 
   <div class="actors">
     <div>
-      <ActorCard :actor="actorInfo" v-if="actorInfo" />
-
-      <h3>Les Films de l'Acteur : </h3>
-      <ul v-for="movie in actorInfo.movies" :key="actor">
-        <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
-          <li>
-            {{ movie.title }}
-          </li>
-        </router-link>
-      </ul>
+      <div style="display: flex; justify-content: center; flex-direction: row; gap: 2rem;">
+        <div>
+          <img src="../assets/img/silhouette.jpg" alt="silhouette" width="300">
+        </div>
+        <div>
+          <p><span style="text-transform: uppercase; font-weight: 700;">Prénom : </span> {{ actorInfo.firstName }}</p>
+          <p><span style="text-transform: uppercase; font-weight: 700;">Nom : </span> {{ actorInfo.lastName }}</p>
+          <p v-if="actorInfo.nationality"><span style="text-transform: uppercase; font-weight: 700;">Nationalitée : </span> {{ actorInfo.nationality.name }}</p>
+          <div>
+            <span style="text-transform: uppercase; font-weight: 700;">Films : </span>
+            <ul class="list">
+              <li v-for="movie in actorInfo.movies" :key="movie.id">
+                <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
+                  {{ movie.title }}
+                </router-link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
