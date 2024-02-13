@@ -1,4 +1,5 @@
-#app {
+html {
+  background-color: #ffffff17;
 }
 
 #app {
@@ -68,6 +69,7 @@
   flex-direction: column;
   text-align: center;
   overflow-y: auto;
+  max-height: 76vh;
 }
 
 .modal-body h2 {
@@ -99,6 +101,7 @@
 
 .card-content {
   position: relative;
+  height: 100%;
 }
 
 .card_gesture {
@@ -115,6 +118,31 @@
   height: 27px;
   width: 27px;
   font-size: 20px;
+}
+
+
+.star-notation-container {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.star-notation {
+  
+  padding: 0;
+}
+
+.form-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#actorsContainer {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 @media (min-width: 720px) {

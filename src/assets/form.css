@@ -1,8 +1,11 @@
 input[type=text],
 input[type=password],
 input[type=email],
+input[type=number],
+input[type=date],
+select,
 textarea {
-  padding: 10px 15px;
+  padding: 10px 8px;
   border-radius: 5px;
   border: 2px solid hsla(160, 100%, 37%, 1);
 }
@@ -32,4 +35,8 @@ form textarea {
 
 form button {
   position: relative;
+}
+
+select {
+  width: 100%;
 }
