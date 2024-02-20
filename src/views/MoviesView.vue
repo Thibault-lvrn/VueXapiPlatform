@@ -3,17 +3,15 @@ import {ref, onMounted} from 'vue';
 import MovieCard from '@/components/Card/MovieCard.vue';
 import {urlBase} from '@/main.js';
 import axios from 'axios';
-import DateFormatter from '@/components/entityManager/DateFormatter.vue';
 import AddMovie from '@/components/entityManager/AddMovie.vue';
-import RemoveMovie from '@/components/entityManager/RemoveMovie.vue';
-import UpdateMovie from '@/components/entityManager/UpdateMovie.vue';
 
 const movies = ref([]);
 const pageNumber = ref(parseInt(localStorage.getItem('moviePageNumber')) || 1);
-const itemsPerPage = ref(9);
+const itemsPerPage = ref(8);
 const numberOfPages = ref('');
 const lastPageUrl = ref('');
 const isLoading = ref(true);
+const searchTerm = ref('');
 
 const fetchMovie = async (page) => {
   if (page) {
@@ -21,7 +19,25 @@ const fetchMovie = async (page) => {
   }
   try {
     const response = await axios.get(
-        `${urlBase}/api/movies?page=${pageNumber.value}&itemsPerPage=${itemsPerPage.value}`);
+      `${urlBase}/api/movies?page=${pageNumber.value}&itemsPerPage=${itemsPerPage.value}&title=${searchTerm.value}`
+    );
+    movies.value = response.data;
+    lastPageUrl.value = movies.value['hydra:view']['hydra:last'];
+    getNumberOfPages();
+    isLoading.value = false;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const searchMovies = async () => {
+  pageNumber.value = 1;
+  if (!searchTerm.value) {
+    fetchMovie();
+    return;
+  }
+  try {
+    const response = await axios.get(`${urlBase}/api/movies?page=${pageNumber.value}&itemsPerPage=${itemsPerPage.value}&title=${searchTerm.value}`);
     movies.value = response.data;
     lastPageUrl.value = movies.value['hydra:view']['hydra:last'];
     getNumberOfPages();
@@ -33,7 +49,13 @@ const fetchMovie = async (page) => {
 
 const getNumberOfPages = async () => {
   const dernierChiffre = lastPageUrl.value.match(/\d+$/);
-  numberOfPages.value = dernierChiffre ? parseInt(dernierChiffre[0], 10) : 0;
+  let test = typeof lastPageUrl.value;
+  if ((dernierChiffre === undefined) || (dernierChiffre == null) || (dernierChiffre == "undefined")) {
+  // if (test != 'string') {
+    numberOfPages.value = 1;
+  } else {
+    numberOfPages.value = dernierChiffre ? parseInt(dernierChiffre[0], 10) : 0;
+  }
 };
 
 const nextPage = () => {
@@ -83,68 +105,35 @@ const uploadFile = async (file) => {
   <h1>Movies page</h1>
   <div class="movies">
     <div>
-      <ul class="pagination">
-        <button class="pagination_btn" @click="previousPage()">&lt;</button>
-        <template v-for="page in numberOfPages">
-          <button class="pagination_btn" :class="{ active: pageNumber === page }" @click="fetchMovie(page)">
-            <span>{{ page }}</span>
-          </button>
-        </template>
-        <button class="pagination_btn" @click="nextPage()">></button>
-      </ul>
-    </div>
-    <div class="addMovie">
+      <form class="search-container">
+        <input type="text" v-model="searchTerm" placeholder="Rechercher des films..." @input="searchMovies">
+      </form>
       <div>
-        <button @click="AddMovie.methods.openModalAdd()">Ajouter un film</button>
+        <ul class="pagination">
+          <button class="pagination_btn" @click="previousPage()">&lt;</button>
+          <template v-for="page in numberOfPages">
+            <button class="pagination_btn" :class="{ active: pageNumber === page }" @click="fetchMovie(page)">
+              <span>{{ page }}</span>
+            </button>
+          </template>
+          <button class="pagination_btn" @click="nextPage()">></button>
+        </ul>
+      </div>
+      <div class="addEntity">
+        <div>
+          <button @click="AddMovie.methods.openModalAdd()">Ajouter un film</button>
+        </div>
       </div>
     </div>
 
-    <ul>
-      <div v-if="isLoading">
+
+    <ul class="item-listing" :class="{ loadingContainer: isLoading }">
+      <div class="loading" v-if="isLoading">
         Chargement...
       </div>
-      <ul>
-        <li class="card card-movie" v-if="!isLoading" v-for="movie in movies['hydra:member']" :key="movie.id">
-          <MovieCard :movie="movie" callerComponent="MoviesView" v-if="movie"/>
-        </li>
-      </ul>
+      <li class="card card-movie" v-if="!isLoading" v-for="movie in movies['hydra:member']" :key="movie.id">
+        <MovieCard :movie="movie" callerComponent="MoviesView" v-if="movie"/>
+      </li>
     </ul>
   </div>
 </template>
-
-<style>
-
-.pagination {
-  margin-bottom: 60px;
-}
-
-.pagination .active {
-  background-color: rgb(58, 58, 58);;
-  color: white;
-}
-
-.form-input {
-  width: 100%;
-}
-
-.form-input label {
-  display: block;
-  width: 100%;
-}
-
-.noScroll {
-  overflow: hidden;
-}
-
-.addMovie {
-  margin-bottom: 50px;
-  display: flex;
-  justify-content: center;
-}
-
-@media (min-width: 1024px) {
-  .about {
-    display: flex;
-  }
-}
-</style>

@@ -1,5 +1,7 @@
 <script setup>
 import { defineProps } from 'vue';
+import { urlBase } from '@/main.js';
+import { urlImgBase } from '@/main.js';
 
 defineProps({
   movie: {
@@ -12,18 +14,18 @@ defineProps({
   },
 });
 
-import DateFormatter from '@/components/entityManager/DateFormatter.vue';
 import AddMovie from '@/components/entityManager/AddMovie.vue';
 import RemoveMovie from '@/components/entityManager/RemoveMovie.vue';
 import UpdateMovie from '@/components/entityManager/UpdateMovie.vue';
 </script>
 
 <template v-if="callerComponent != 'FicheMovieView'">
-  <div class="card-content">
+  <div class="card-content movie-card">
     <img class="card_background_img" v-if="movie.file[0]" :src="'http://89.234.182.9/MovieProject/Api/WRA506-ApiPlatform-films/public/uploads/' + movie.file[0]['filePath']" :alt="movie.title" width="100" height="100">
+    <!-- <img class="card_background_img" v-if="movie.file[0]" :src="`${urlBase}/api/public/uploads/` + movie.file[0]['filePath']" :alt="movie.title" width="100" height="100"> -->
     <div class="content-text">
       <h4 v-if="movie">{{ movie.title }}</h4>
-      <div v-if="callerComponent === 'MoviesView' || callerComponent === 'HomeView' || callerComponent === 'CategoriesView'" class="card-footer">
+      <div class="card-footer" v-if="callerComponent === 'MoviesView' || callerComponent === 'HomeView' || callerComponent === 'CategoriesView'">
         <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
           <button>
             Voir plus

@@ -1,7 +1,9 @@
 <script>
 import axios from 'axios';
-import { ref } from 'vue';
+import { handleError, ref } from 'vue';
+import { urlBase } from '@/main.js';
 import GetActors from '@/components/entityManager/GetActors.vue';
+import GetCategory from '@/components/entityManager/GetCategory.vue';
 import { onMounted } from 'vue';
 
 export default {
@@ -9,20 +11,61 @@ export default {
     const token = localStorage.getItem('token');
     const formTitle = ref('');
     const actors = ref([]);
-
+    const category = ref([]);
+    const emptytitle = ref(false);
+    const emptyDescription = ref(false);
+    const emptyReleaseDate = ref(false);
+    const emptyDuration = ref(false);
+    const emptyCategory = ref(false);
+    const emptyAddEntries = ref(false);
+    const emptyAddBudget = ref(false);
+    const emptyAddDirector = ref(false);
+    const emptyAddWebSite = ref(false);
+    const emptyAddImage = ref(false);
+    const emptyNotation = ref(false);
+    const activeNotation = ref(null);
+    
     onMounted(async () => {
       try {
-        const response = await GetActors.methods.fetchDataWithAuthorization();
+        const response = await GetActors.methods.getActors();
         actors.value = response['hydra:member'];
       } catch (error) {
         console.error(error);
       }
     });
 
+    onMounted(async () => {
+      try {
+        const response = await GetCategory.methods.getCategory();
+        category.value = response['hydra:member'];
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
+    const updateActiveNotation = (note) => {
+      activeNotation.value = note;
+      emptyNotation.value = false;
+    };
+
     return {
       token,
       formTitle,
       actors,
+      category,
+      emptytitle,
+      emptyDescription,
+      emptyReleaseDate,
+      emptyDuration,
+      emptyCategory,
+      emptyAddEntries,
+      emptyAddBudget,
+      emptyAddDirector,
+      emptyAddWebSite,
+      emptyAddImage,
+      emptyNotation,
+      activeNotation,
+      updateActiveNotation,
     };
   },
   methods: {
@@ -35,6 +78,7 @@ export default {
       }
     },
     openModalAdd() {
+      console.log('openModalAdd');
       const modals = document.querySelectorAll('.modal');
       const body = document.querySelector(`body`);
 
@@ -85,66 +129,121 @@ export default {
     },
     updateFormAddTitle(event) {
       this.formTitle = event.target.value;
+      this.emptytitle = false;
     },
     updateFormAddDescription(event) {
       this.formDescription = event.target.value;
+      this.emptyDescription = false;
     },
     updateFormAddreleaseDate(event) {
       this.formReleaseDate = event.target.value;
+      this.emptyReleaseDate = false;
     },
     updateFormAddDuration(event) {
       this.formDuration = event.target.value;
+      this.emptyDuration = false;
     },
     updateFormAddNotation(note) {
       this.formNotation = note;
+      this.updateActiveNotation(note);
+      this.emptyNotation = false;
     },
     updateFormAddEntries(event) {
       this.formEntries = event.target.value;
+      this.emptyAddEntries = false;
     },
     updateFormAddBudget(event) {
       this.formBudget = event.target.value;
+      this.emptyAddBudget = false;
     },
     updateFormAddDirector(event) {
       this.formDirector = event.target.value;
+      this.emptyAddDirector = false;
+    },
+    updateFormAddCategory(event) {
+      this.formCategory = event.target.value;
+      this.emptyCategory = false;
+    },
+    updateFormAddWebSite(event) {
+      this.formWebSite = event.target.value;
+      this.emptyAddWebSite = false;
+    },
+    updateFormAddImage(event) {
+      this.formImage = event.target.value;
+      this.addImage(this.formImage);
+      this.emptyAddImage = false;
+    },
+    async addImage(event) {
+      const fileInput = event.target.files[0];
+      const myHeaders = {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data',
+      };
+
+      const formData = new FormData();
+      formData.append('file', fileInput, 'images.jpeg');
+
+      try {
+        const response = await axios.post(`${urlBase}/api/media_objects`, formData, {
+          headers: myHeaders,
+        });
+        if (response.data['@id']) {
+          this.imageId = response.data['@id'];
+        } else {
+          console.log('L\'ID de l\'image n\'a pas été trouvé dans la réponse.');
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
     async addMovie() {
       event.preventDefault();
       
+      if (!this.formTitle) {
+        this.emptytitle = true;
+      }
+      if (!this.formDescription) {
+        this.emptyDescription = true;
+      }
+      if (!this.formReleaseDate) {
+        this.emptyReleaseDate = true;
+      }
+      if (!this.formDuration) {
+        this.emptyDuration = true;
+      }
+      if (!this.formCategory) {
+        this.emptyCategory = true;
+      }
+      if (!this.formEntries) {
+        this.emptyAddEntries = true;
+      }
+      if (!this.formBudget) {
+        this.emptyAddBudget = true;
+      }
+      if (!this.formDirector) {
+        this.emptyAddDirector = true;
+      }
+      if (!this.formWebSite) {
+        this.emptyAddWebSite = true;
+      }
+      if (!this.formImage) {
+        this.emptyAddImage = true;
+      }
+
+      if (!this.formTitle || !this.formDescription || !this.formReleaseDate || !this.formDuration || !this.formCategory) {
+        return;
+      }
+
+      if (this.formCategory == '--choisir une catégorie--') {
+        return;
+      }
+
       const selectedActorIds = this.getSelectedActorsIds();
 
-      const myHeaders = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      };
-
-      const data = {
-        category: "/WRA506/index.php/api/categories/2",
-        actor: selectedActorIds,
-        title: this.formTitle,
-        description: this.formDescription,
-        releaseDate: this.formReleaseDate,
-        duration: this.formDuration,
-        note: this.formNotation,
-        entries: parseInt(this.formEntries),
-        budget: this.formBudget,
-        director: this.formDirector,
-        website: "http://maillard.fr/recusandae-distinctio-et-ut-est-voluptas-libero-reiciendis"
-      };
-
-      const requestOptions = {
-        method: 'post',
-        url: 'http://localhost:8088/WRA506/index.php/api/movies',
-        headers: myHeaders,
-        data: data
-      };
-
       try {
-        const response = await axios.post('http://localhost:8088/WRA506/index.php/api/movies', {
-          category: "/WRA506/index.php/api/categories/2",
-          actor: [
-            "/WRA506/index.php/api/actors/3",
-            "/WRA506/index.php/api/actors/9"
-          ],
+        const response = await axios.post(`${urlBase}/api/movies`, {
+          category: `/WRA506/index.php/api/categories/${this.formCategory}`,
+          actor: selectedActorIds,
           title: this.formTitle,
           description: this.formDescription,
           releaseDate: this.formReleaseDate,
@@ -153,10 +252,11 @@ export default {
           entries: parseInt(this.formEntries),
           budget: parseInt(this.formBudget),
           director: this.formDirector,
-          website: "http://maillard.fr/recusandae-distinctio-et-ut-est-voluptas-libero-reiciendis"
+          website: this.formWebSite,
         }, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         });
         window.location.reload()
@@ -181,69 +281,79 @@ export default {
             <div class="form-input">
               <label for="title">Titre</label>
               <input type="text" id="title" name="title" @input="updateFormAddTitle">
+              <span class="error" :class="{ active: emptytitle }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="description">Description</label>
               <textarea type="textarea" id="description" name="description" @input="updateFormAddDescription"></textarea>
+              <span class="error" :class="{ active: emptyDescription }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="releaseDate" >Date de sortie</label>
               <input type="date" id="releaseDate" name="releaseDate" @input="updateFormAddreleaseDate">
+              <span class="error" :class="{ active: emptyReleaseDate }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="duration" >Durée du film</label>
               <input type="number" id="duration" name="duration" @input="updateFormAddDuration">
+              <span class="error" :class="{ active: emptyDuration }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="notation" >Note</label>
               <div class="star-notation-container">
-                <button type="button" class="star-notation" @click="updateFormAddNotation(1)">1</button>
-                <button type="button" class="star-notation" @click="updateFormAddNotation(2)">2</button>
-                <button type="button" class="star-notation" @click="updateFormAddNotation(3)">3</button>
-                <button type="button" class="star-notation" @click="updateFormAddNotation(4)">4</button>
-                <button type="button" class="star-notation" @click="updateFormAddNotation(5)">5</button>
-                <button type="button" class="star-notation" @click="updateFormAddNotation(6)">6</button>
-                <button type="button" class="star-notation" @click="updateFormAddNotation(7)">7</button>
-                <button type="button" class="star-notation" @click="updateFormAddNotation(8)">8</button>
-                <button type="button" class="star-notation" @click="updateFormAddNotation(9)">9</button>
-                <button type="button" class="star-notation" @click="updateFormAddNotation(10)">10</button>
+                <!-- <button v-for="i in 10" :key="i" type="button" class="star-notation" :class="'button-' + i" @click="updateFormAddNotation(i)">{{ i }}</button> -->
+                <button v-for="i in 10" :key="i" type="button" class="star-notation" :class="{ active: activeNotation === i }" @click="updateFormAddNotation(i)">{{ i }}</button>
               </div>
+              <span class="error" :class="{ active: emptyNotation }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="entries">Nombres d'entrées</label>
               <input type="number" id="entries" name="entries" @input="updateFormAddEntries">
+              <span class="error" :class="{ active: emptyAddEntries }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="budget">Budget</label>
               <input type="number" id="budget" name="budget" @input="updateFormAddBudget">
+              <span class="error" :class="{ active: emptyAddBudget }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="director">Directeur</label>
               <input type="text" id="director" name="director" @input="updateFormAddDirector">
+              <span class="error" :class="{ active: emptyAddDirector }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="actors">Acteurs</label> 
               <div id="actorsContainer" v-if="actors">
                 <select name="actors" id="actors" class="actorSelect">
+                  <option>--choisir un acteur--</option>
                   <option v-for="actor in actors" :value="actor.id">{{ actor.firstName }} {{ actor.lastName }}</option>
                 </select>
               </div>
-              <button type="button" @click="addActorField">Ajouter un autre acteur</button>
-              <button type="button" @click="removeLastActorField">Supprimer un acteur</button>
+              <div class="little-button-container">
+                <button type="button" @click="addActorField">+</button>
+                <button type="button" @click="removeLastActorField">-</button>
+              </div>
             </div>
             <div class="form-input">
-              <label for="director">categories</label> 
-              <select name="categories" id="categories">
-                <option value="1">Category 1</option>
-                <option value="2">Category 2</option>
-                <option value="3">Category 3</option>
-                <option value="4">Category 4</option>
-              </select>
+              <label for="director">categories</label>
+              <div v-if="category">
+                <select name="categories" id="categories" @input="updateFormAddCategory">
+                  <option>--choisir une catégorie--</option>
+                  <option v-for="cat in category" :value="cat.id">{{ cat.name }}</option>
+                </select>
+                <!-- <span class="error" :class="{ active: wrongCategory }">Veuillez choisir une catégorie valide</span> -->
+              </div> 
             </div>
-            <!-- <div class="form-input">
+            <div class="form-input">
+              <label for="director">Site web</label>
+              <input type="text" id="webSite" name="website" @input="updateFormAddWebSite">
+              <span class="error" :class="{ active: emptyAddWebSite }">Ce champ est requis</span>
+            </div>
+            <div class="form-input">
               <label for="director">Image</label>
-              <input type="file" id="director" name="director" @input="updateFormAddImage">
-            </div> -->
+              <input type="file" id="director" name="director" @change="addImage">
+              <!-- <span class="error" :class="{ active: emptyAddImage }">Ce champ est requis</span> -->
+            </div>
             <button @click="addMovie()">Ajouter</button>
           </form>
         </template>
