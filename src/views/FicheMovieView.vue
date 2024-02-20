@@ -32,12 +32,12 @@ onMounted(async () => {
         </div>
         <div style="margin-top: 30px;">
           <h3 style="text-align: left; font-weight: 700;">{{ movieInfo.title }}</h3>
-          <p><span style="text-transform: uppercase; font-weight: 700;">Description : </span> {{ movieInfo.description }}</p>
-          <p><span style="text-transform: uppercase; font-weight: 700;">Date de sortie :</span> {{ movieInfo.releaseDate }}</p>
-          <p><span style="text-transform: uppercase; font-weight: 700;">Durée :</span> {{ movieInfo.duration }} minutes</p>
-          <p><span style="text-transform: uppercase; font-weight: 700;">Note : </span>{{ movieInfo.note }} étoiles</p>
-          <p><span style="text-transform: uppercase; font-weight: 700;">La Catégorie du film :</span> <router-link :to="{ name: 'FicheCategory', params: { id: movieInfo.category.id } }">{{ movieInfo.category.name }}</router-link></p>
-          <div>
+          <p v-if="movieInfo.description"><span style="text-transform: uppercase; font-weight: 700;">Description : </span> {{ movieInfo.description }}</p>
+          <p v-if="movieInfo.releaseDate"><span style="text-transform: uppercase; font-weight: 700;">Date de sortie :</span> {{ movieInfo.releaseDate }}</p>
+          <p v-if="movieInfo.duration"><span style="text-transform: uppercase; font-weight: 700;">Durée :</span> {{ movieInfo.duration }} minutes</p>
+          <p v-if="movieInfo.note"><span style="text-transform: uppercase; font-weight: 700;">Note : </span>{{ movieInfo.note }} étoiles</p>
+          <p v-if="movieInfo.category"><span style="text-transform: uppercase; font-weight: 700;">La Catégorie du film :</span> <router-link :to="{ name: 'FicheCategory', params: { id: movieInfo.category.id } }">{{ movieInfo.category.name }}</router-link></p>
+          <div v-if="movieInfo.actor">
             <span style="text-transform: uppercase; font-weight: 700;">Distribution : </span>
             <ul class="list">
               <li v-for="actor in movieInfo.actor" :key="movie">
