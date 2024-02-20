@@ -1,4 +1,5 @@
-#app {
+html {
+  background-color: #ffffff17;
 }
 
 #app {
@@ -9,8 +10,209 @@
   font-weight: normal;
 }
 
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff17;
+  backdrop-filter: blur(1px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: none;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background-color: rgb(42, 42, 42);
+  border-radius: 10px;
+  border: 2px solid hsla(160, 100%, 37%, 1);
+  width: 80%;
+  padding: 40px;
+  position: relative;
+}
+
+.modal-content:not(.modal-content-remove) {
+  max-height: 85vh;
+}
+
+.modal-content p {
+  margin-bottom: 20px;
+}
+
+.modal-content .btns {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modal-content .close {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 15px;
+  font-size: 30px;
+}
+
+.modal-content .modal-body {
+  border-radius: 8px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  overflow-y: auto;
+  max-height: 76vh;
+}
+
+.modal-body h2 {
+  margin: 0;
+  margin-bottom: 20px;
+}
+
+.modal-body label {
+  width: 100%;
+  text-align: left;
+}
+
+.click-outsise {
+  background: transparent;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+}
+
+.card_gesture {
+  opacity: 0;
+  transition: 0.1s all ease;
+}
+
+.card:hover .card_gesture {
+  opacity: 1;
+}
+
+.card-content {
+  position: relative;
+  height: 100%;
+}
+
+.card_gesture {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 5px;
+}
+
+.remove,
+.edit {
+  padding: 0;
+  height: 27px;
+  width: 27px;
+  font-size: 20px;
+}
+
+
+.star-notation-container {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.star-notation {
+  padding: 0;
+}
+
+.star-notation.active {
+  background-color: rgb(58, 58, 58);
+}
+
+#actorsContainer {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.addEntity {
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-direction: row;
+}
+
+.search-container input {
+  width: 400px;
+}
+
+.search-container button {
+  width: 200px !important;
+}
+
+.pagination {
+  margin-bottom: 60px;
+}
+
+.pagination .active {
+  background-color: rgb(58, 58, 58);;
+  color: white;
+}
+
+.form-input {
+  width: 100%;
+}
+
+.form-input label {
+  display: block;
+  width: 100%;
+}
+
+.noScroll {
+  overflow: hidden;
+}
+
+.little-button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.little-button-container button {
+  width: 50%;
+}
+
+@media (min-width: 1024px) {
+  .about {
+    display: flex;
+  }
+}
+
+@media (min-width: 720px) {
+  .modal-content {
+    width: 70%;
+  }
+}
+
 @media (min-width: 1024px) {
   #app {
     padding: 0 2rem 12.5rem 2rem 12rem;
+  }
+  .modal-content {
+    width: 50%;
   }
 }

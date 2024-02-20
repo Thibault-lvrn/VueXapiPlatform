@@ -7,3 +7,14 @@ button {
   cursor: pointer;
   transition: 0.4s;
 }
+
+button:not(.pagination_btn, .gesture) {
+  width: 100%;
+}
+
+
+button.secondary {
+  background-color: transparent;
+  border: 2px solid hsla(160, 100%, 37%, 1);
+  color: white;
+}

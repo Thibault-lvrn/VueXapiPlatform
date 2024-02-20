@@ -1,34 +1,52 @@
 <script setup>
-import { ref } from 'vue';
-import ActorCard from '@/components/ActorCard.vue';
+import { ref, onMounted } from 'vue';
+import ActorCard from '@/components/Card/ActorCard.vue';
 import { urlBase } from '@/main.js';
 
-let actors = ref([]);
+const actors = ref([]);
+const isLoading = ref(true);
 
 const fetchActors = async () => {
-  const response = await fetch(`${urlBase}/api/actors?page=1`);
-  actors.value = await response.json();
-  console.log(actors);
+  try {
+    const response = await fetch(`${urlBase}/api/actors?page=1`);
+    
+    if (!response.ok) {
+      throw new Error(`Error fetching actors. Status: ${response.status}`);
+    }
+
+    actors.value = await response.json();
+    isLoading.value = false;
+  } catch (error) {
+    console.error('An error occurred while fetching actors:', error);
+    isLoading.value = false;
+  }
 }
 
-fetchActors();
+onMounted(() => {
+  fetchActors();
+});
 
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the Actors page</h1>
-  </div>
-
-  <pre>{{ actors.member }}</pre>
+  <h1>Actors page</h1>
 
   <div class="actors">
-    <h2>Actors</h2>
     <ul>
-      <li class="card" v-for="actor in actors['hydra:member']" :key="actor.id">
-        <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+      <div v-if="isLoading">
+        Chargement...
+      </div>
+      <li v-if="!isLoading" class="card" v-for="actor in actors['hydra:member']" :key="actor.id">
+        <div class="card-content">
           <ActorCard :actor="actor" v-if="actor" />
-        </router-link>
+          <div class="card-footer">
+            <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+              <button>
+                Voir plus
+              </button>
+            </router-link>
+          </div>
+        </div>
       </li>
     </ul>
   </div>

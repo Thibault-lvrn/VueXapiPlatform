@@ -1,31 +1,47 @@
 <script setup>
-import { ref } from 'vue';
-import MovieCard from '@/components/MovieCard.vue';
-import { urlBase } from '@/main.js';
-import { onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
+import MovieCard from '@/components/Card/MovieCard.vue';
+import {urlBase} from '@/main.js';
 import axios from 'axios';
+import AddMovie from '@/components/entityManager/AddMovie.vue';
 
 const movies = ref([]);
 const pageNumber = ref(parseInt(localStorage.getItem('moviePageNumber')) || 1);
-const itemsPerPage = ref(9);
-const numberOfPages = ref(5);
-const lastPageUrl = ref("");
-const loading = ref(false);
-const modalOpen = ref(false);
-const movie = ref({});
+const itemsPerPage = ref(8);
+const numberOfPages = ref('');
+const lastPageUrl = ref('');
+const isLoading = ref(true);
+const searchTerm = ref('');
 
 const fetchMovie = async (page) => {
   if (page) {
     pageNumber.value = page;
   }
-
   try {
-    const response = await axios.get(`${urlBase}/api/movies?page=${pageNumber.value}&itemsPerPage=${itemsPerPage.value}`);
+    const response = await axios.get(
+      `${urlBase}/api/movies?page=${pageNumber.value}&itemsPerPage=${itemsPerPage.value}&title=${searchTerm.value}`
+    );
     movies.value = response.data;
-//    const newmovies = response.data['hydra:member'];
-//    movies.value.splice(0, movies.value.length, ...newmovies);
-    lastPageUrl.value = movies.value['hydra:view']["hydra:last"];
+    lastPageUrl.value = movies.value['hydra:view']['hydra:last'];
     getNumberOfPages();
+    isLoading.value = false;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const searchMovies = async () => {
+  pageNumber.value = 1;
+  if (!searchTerm.value) {
+    fetchMovie();
+    return;
+  }
+  try {
+    const response = await axios.get(`${urlBase}/api/movies?page=${pageNumber.value}&itemsPerPage=${itemsPerPage.value}&title=${searchTerm.value}`);
+    movies.value = response.data;
+    lastPageUrl.value = movies.value['hydra:view']['hydra:last'];
+    getNumberOfPages();
+    isLoading.value = false;
   } catch (error) {
     console.error(error);
   }
@@ -33,8 +49,14 @@ const fetchMovie = async (page) => {
 
 const getNumberOfPages = async () => {
   const dernierChiffre = lastPageUrl.value.match(/\d+$/);
-  numberOfPages.value = dernierChiffre ? parseInt(dernierChiffre[0], 10) : 0;
-}
+  let test = typeof lastPageUrl.value;
+  if ((dernierChiffre === undefined) || (dernierChiffre == null) || (dernierChiffre == "undefined")) {
+  // if (test != 'string') {
+    numberOfPages.value = 1;
+  } else {
+    numberOfPages.value = dernierChiffre ? parseInt(dernierChiffre[0], 10) : 0;
+  }
+};
 
 const nextPage = () => {
   if (pageNumber.value >= numberOfPages.value) {
@@ -44,7 +66,7 @@ const nextPage = () => {
     localStorage.setItem('moviePageNumber', pageNumber.value);
   }
   fetchMovie();
-}
+};
 
 const previousPage = () => {
   if (pageNumber.value <= 1) {
@@ -54,186 +76,64 @@ const previousPage = () => {
     localStorage.setItem('moviePageNumber', pageNumber.value);
   }
   fetchMovie();
-}
-
-const openModal = (id) => {
-  const modals = document.querySelectorAll('.modal');
-  modals.forEach((modal) => {
-    modal.classList.remove('active');
-  });
-
-  const specificModal = document.querySelector(`.modal-${id}`);
-  if (specificModal) {
-    specificModal.classList.add('active');
-  }
-}
-
-const closeModal = (id) => {
-  const specificModal = document.querySelector(`.modal-${id}`);
-  if (specificModal) {
-    specificModal.classList.remove('active');
-  }
-}
+};
 
 onMounted(() => {
   fetchMovie();
 });
 
-const submitForm = async (id) => {
-  event.preventDefault();
-
-  const myHeaders = {
-    'Content-Type': 'application/merge-patch+json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+const uploadFile = async (file) => {
+  const headers = {
+    'Content-Type': 'multipart/form-data',
+    'Cookie': 'sf_redirect=%7B%22token%22%3A%22b9f283%22%2C%22route%22%3A%22_api_%5C%2Fmedia_objects%7B._format%7D_post%22%2C%22method%22%3A%22POST%22%2C%22controller%22%3A%22App%5C%5CController%5C%5CCreateMediaObjectAction%22%2C%22status_code%22%3A201%2C%22status_text%22%3A%22Created%22%7D',
   };
 
-  const data = {
-    title: movie.title,
-    description: movie.description,
-    releaseDate: movie.releaseDate
-  };
-
-  const requestOptions = {
-    method: 'patch',
-    url: `${urlBase}/api/movies/${id}`,
-    headers: myHeaders,
-    data: data,
-  };
+  const formData = new FormData();
+  formData.append('file', file, 'banner_linkedin_EN.jpg');
 
   try {
-    const response = await axios(requestOptions);
-    console.log(response.data);
+    const response = await axios.post('http://localhost:8088/WRA506/index.php/api/media_objects', formData, {
+      headers: headers,
+    });
   } catch (error) {
-    console.error('error', error);
+    console.error('Erreur lors de la requête:', error);
   }
 };
-
 </script>
-<!-- <script>
-export default {
-  data() {
-    return {
-      movie: {
-        title: '',
-        description: '',
-        releaseDate: '',
-        // Add other form fields here
-      }
-    };
-  },
-  methods: {
-    submitForm(id) {
-      event.preventDefault();
-      // Use formData in your Axios request
-      const myHeaders = {
-        'Content-Type': 'application/merge-patch+json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      };
-
-      // Define data
-      const data = {
-        title: this.movie.title,
-        description: this.movie.description,
-        releaseDate: this.movie.releaseDate
-      };
-      // Define Axios request configuration
-      const requestOptions = {
-        method: 'patch', // Note that HTTP methods are lowercase in Axios
-        url: `http://localhost:8088/WRA506/index.php/api/movies/${id}`,
-        headers: myHeaders,
-        data: data,
-      };
-
-      // Make the Axios request
-      const response = axios(requestOptions)
-        console.log(response)
-        .then(response => console.log(response.data))
-        .catch(error => console.error('error', error));
-    },
-  },
-};
-</script> -->
 
 <template>
-  <div class="about">
-    <h1>This is the Movies page</h1>
-  </div>
-
+  <h1>Movies page</h1>
   <div class="movies">
-    <h2>Movies</h2>
     <div>
-      <ul class="pagination">
-        <button @click="previousPage()">&lt;</button>
-        <templat v-for="page in numberOfPages">
-          <button :class="{ active: pageNumber === page }" @click="fetchMovie(page)">
-            <span>{{ page }}</span>
-          </button>
-        </templat>
-        <button @click="nextPage()">></button>
-      </ul>
+      <form class="search-container">
+        <input type="text" v-model="searchTerm" placeholder="Rechercher des films..." @input="searchMovies">
+      </form>
+      <div>
+        <ul class="pagination">
+          <button class="pagination_btn" @click="previousPage()">&lt;</button>
+          <template v-for="page in numberOfPages">
+            <button class="pagination_btn" :class="{ active: pageNumber === page }" @click="fetchMovie(page)">
+              <span>{{ page }}</span>
+            </button>
+          </template>
+          <button class="pagination_btn" @click="nextPage()">></button>
+        </ul>
+      </div>
+      <div class="addEntity">
+        <div>
+          <button @click="AddMovie.methods.openModalAdd()">Ajouter un film</button>
+        </div>
+      </div>
     </div>
 
-    <ul>
-      
-      <li class="card" v-for="movie in movies['hydra:member']" :key="movie.id">
-        <div class="card-content">
-          <MovieCard :movie="movie" v-if="movie" />
-          <div class="card-footer">
-            <button v-on:click="openModal(movie.id)">Modifier</button>
-            <button>
-              <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
-                Voir plus
-              </router-link>
-            </button>
-          </div>
-        </div>
 
-        <div class="modal-movie modal" :class="'modal-' + movie.id">
-          <div class="modal-content">
-            <div class="modal-header">
-              <span class="close" v-on:click="closeModal(movie.id)">&times;</span>
-            </div>
-            <div class="modal-body">
-              <h2>Modifier le film</h2>
-              <form>
-                <label for="title">Titre</label>
-                <input type="text" id="title" name="title" v-model="movie.title">
-                <label for="description">Description</label>
-                <textarea type="textarea" id="description" name="description" v-model="movie.description"></textarea>
-                <label for="releaseDate" >Date de sortie</label>
-                <input type="date" id="releaseDate" name="releaseDate" v-model="movie.releaseDate">
-                <button v-on:click="submitForm(movie.id)">Modifier</button>
-              </form>
-            </div>
-          </div>
-        </div>
+    <ul class="item-listing" :class="{ loadingContainer: isLoading }">
+      <div class="loading" v-if="isLoading">
+        Chargement...
+      </div>
+      <li class="card card-movie" v-if="!isLoading" v-for="movie in movies['hydra:member']" :key="movie.id">
+        <MovieCard :movie="movie" callerComponent="MoviesView" v-if="movie"/>
       </li>
     </ul>
   </div>
 </template>
-
-<style>
-
-.card-footer {
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-  height: 100%;
-}
-
-@media (min-width: 1024px) {
-  .about {
-    display: flex;
-  }
-
-  .pagination {
-    margin-bottom: 60px;
-  }
-
-  .card button {
-    width: 100%;
-  }
-}
-</style>

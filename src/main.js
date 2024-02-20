@@ -6,7 +6,8 @@ import router from './router'
 
 const app = createApp(App)
 
-export let urlBase = "http://localhost:8088/WRA506/index.php"
+export let urlBase = import.meta.env.VITE_API_BASE_URL
+export let urlImgBase = import.meta.env.IMG_BASE_URL
 
 app.use(router)
 

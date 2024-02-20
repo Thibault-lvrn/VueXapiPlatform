@@ -3,34 +3,26 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { urlBase } from '@/main.js';
-import MovieCard from '@/components/MovieCard.vue';
-
+import MovieCard from '@/components/Card/MovieCard.vue';
 
 const route = useRoute()
 let categoryInfo = ref('')
 
 onMounted(async () => {
   const id = route.params.id
-  console.log(id)
   const response = await fetch(`${urlBase}/api/categories/${id}`);
   categoryInfo.value = await response.json()
-  console.log(categoryInfo)
 })
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the info page</h1>
-  </div>
+  <h1>{{ categoryInfo.name }}</h1>
 
   <div class="actors">
-    <h2>Hello {{ categoryInfo.name }}</h2>
     <div>
       <ul>
-        <li v-for="movie in categoryInfo.movies" :key="movie.id">
-          <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
-            <MovieCard :movie="movie" v-if="movie" />
-          </router-link>
+        <li class="card card-movie" v-for="movie in categoryInfo.movies" :key="movie.id">
+          <MovieCard :movie="movie" callerComponent="CategoriesView" v-if="movie" />
         </li>
       </ul>
     </div>

@@ -1,26 +1,40 @@
 <script setup>
-import { ref } from 'vue';
-import MovieCard from '@/components/MovieCard.vue';
+import { ref, onMounted } from 'vue';
+import MovieCard from '@/components/Card/MovieCard.vue';
 import { urlBase } from '@/main.js';
 
 let categories = ref([]);
+const isLoading = ref(true);
 
 const fetchCategories = async () => {
-  const response = await fetch(`${urlBase}/api/categories?page=1`);
-  categories.value = await response.json();
+  try {
+    const response = await fetch(`${urlBase}/api/categories?page=1`);
+    
+    if (!response.ok) {
+      throw new Error(`Error fetching categories. Status: ${response.status}`);
+    }
+
+    categories.value = await response.json();
+    isLoading.value = false;
+
+  } catch (error) {
+    console.error('An error occurred while fetching categories:', error);
+    isLoading.value = false;
+  }
 }
 
-fetchCategories();
+onMounted(fetchCategories);
+
 </script>
 
 <template>
-  <div class="about">
-    <h1>This is the Categories page</h1>
-  </div>
-
+  <h1>Categories page</h1>
+  
   <div class="category">
-    <h2>Categories</h2>
     <div>
+      <div class="loading" v-if="isLoading">
+        Chargement...
+      </div>
       <div v-if="categories" v-for="categorie in categories['hydra:member']" :key="categorie.id">
         <h3>
           <router-link :to="{ name: 'FicheCategory', params: { id: categorie.id } }">
@@ -28,10 +42,11 @@ fetchCategories();
           </router-link>
         </h3>
         <ul>
-          <li class="card" v-for="movie in categorie.movies" :key="movie.id">
-            <router-link :to="{ name: 'FicheMovie', params: { id: movie.id } }">
-              <MovieCard :movie="movie" v-if="movie" />
-            </router-link>
+          <div v-if="isLoading">
+            Chargement...
+          </div>
+          <li v-if="!isLoading" class="card card-movie" v-for="movie in categorie.movies" :key="movie.id">
+            <MovieCard :movie="movie" callerComponent="CategoriesView" v-if="movie" />
           </li>
         </ul>
       </div>
