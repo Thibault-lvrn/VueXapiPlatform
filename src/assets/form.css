@@ -40,3 +40,27 @@ form button {
 select {
   width: 100%;
 }
+
+
+.form-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.error {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+  text-align: left;
+  display: none;
+  position: absolute;
+  bottom: -20px;
+}
+
+.error.active {
+  display: block;
+}

@@ -129,20 +129,77 @@ html {
 }
 
 .star-notation {
-  
   padding: 0;
 }
 
-.form-input {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.star-notation.active {
+  background-color: rgb(58, 58, 58);
 }
 
 #actorsContainer {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.addEntity {
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-direction: row;
+}
+
+.search-container input {
+  width: 400px;
+}
+
+.search-container button {
+  width: 200px !important;
+}
+
+.pagination {
+  margin-bottom: 60px;
+}
+
+.pagination .active {
+  background-color: rgb(58, 58, 58);;
+  color: white;
+}
+
+.form-input {
+  width: 100%;
+}
+
+.form-input label {
+  display: block;
+  width: 100%;
+}
+
+.noScroll {
+  overflow: hidden;
+}
+
+.little-button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.little-button-container button {
+  width: 50%;
+}
+
+@media (min-width: 1024px) {
+  .about {
+    display: flex;
+  }
 }
 
 @media (min-width: 720px) {
