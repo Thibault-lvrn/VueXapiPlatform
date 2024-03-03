@@ -3,9 +3,7 @@ import { urlBase } from '@/main.js';
 </script>
 <script>
 import { urlBase } from '@/main.js';
-import { ref } from 'vue';
 import axios from 'axios';
-import DateFormatter from '@/components/entityManager/DateFormatter.vue';
 
 export default {
   props: {
@@ -58,9 +56,6 @@ export default {
     updateFormReward(event) {
       this.formReward = event.target.value;
     },
-    // updateFormReleaseDate(event) {
-    //   this.formReleaseDate = event.target.value;
-    // },
     async submitForm(id) {
       event.preventDefault();
 
@@ -96,11 +91,16 @@ export default {
 
       try {
         const response = await axios(requestOptions);
-
         window.location.reload()
-
       } catch (error) {
-        console.error(error);
+        if (error.response.statusText === "Unauthorized") {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          this.closeModalAdd();
+          this.router.push(`/login`)
+        } else {
+          console.error('Erreur lors de la modification de l\'acteur :', error);
+        }
       }
     },
   },
@@ -130,11 +130,7 @@ export default {
               <label for="reward">Récompense</label>
               <input type="text" id="reward" name="reward" :value="actor.reward" @input="updateFormReward">
             </div>
-            <!-- <div class="form-input">
-              <label for="releaseDate" >Nationalitée</label>
-              <input type="date" id="releaseDate" name="releaseDate" :value="DateFormatter.methods.formatDateEN(actor.releaseDate)" @input="updateFormReleaseDate">
-            </div> -->
-            <button @click="submitForm(actor.id)">Modifier</button>
+            <button @click="submitForm(actor.id)" class="card-button">Modifier</button>
           </form>
         </template>
         <template v-if="!token">
