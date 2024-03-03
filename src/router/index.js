@@ -50,6 +50,21 @@ const router = createRouter({
       path: '/FicheActor/:id',
       name: 'FicheActor',
       component: () => import('../views/FicheActorView.vue')
+    },
+    {
+      path: '/FicheCategory/:id',
+      name: 'FicheCategory',
+      component: () => import('../views/FicheCategoryView.vue')
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/account',
+      name: 'account',
+      component: () => import('../views/AccountView.vue')
     }
   ]
 })
