@@ -1,7 +1,7 @@
 <script setup>
 import RemoveActor from '@/components/entityManager/RemoveActor.vue';
 import UpdateActor from '@/components/entityManager/UpdateActor.vue';
-import AddActor from '@/components/entityManager/AddActor.vue';
+import { defineProps } from 'vue';
 
 defineProps({
   actor: {
@@ -23,7 +23,7 @@ defineProps({
     </div>
     <div class="card-footer">
       <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
-        <button>
+        <button class="card-button">
           Voir plus
         </button>
       </router-link>
@@ -41,7 +41,6 @@ defineProps({
     <template v-if="callerComponent === 'MoviesView'">
       <UpdateActor :actor="actor"/>
       <RemoveActor :actorId="actor.id"/>
-      <AddActor/>
     </template>
     <!-- end -->
 </template>

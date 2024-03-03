@@ -28,6 +28,7 @@ onMounted(async () => {
           <p><span style="text-transform: uppercase; font-weight: 700;">Prénom : </span> {{ actorInfo.firstName }}</p>
           <p><span style="text-transform: uppercase; font-weight: 700;">Nom : </span> {{ actorInfo.lastName }}</p>
           <p v-if="actorInfo.nationality"><span style="text-transform: uppercase; font-weight: 700;">Nationalitée : </span> {{ actorInfo.nationality.name }}</p>
+          <p v-if="actorInfo.birthDate"><span style="text-transform: uppercase; font-weight: 700;">Date de naissance : </span> {{ actorInfo.birthDate }}</p>
           <div>
             <span style="text-transform: uppercase; font-weight: 700;">Films : </span>
             <ul class="list">

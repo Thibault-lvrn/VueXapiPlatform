@@ -1,9 +1,10 @@
 <script>
 import axios from 'axios';
+import { urlBase } from '@/main.js';
+import GetNationality from '@/components/entityManager/GetNationality.vue';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
-import GetNationality from '@/components/entityManager/GetNationality.vue';
-import { urlBase } from '@/main.js';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
@@ -13,6 +14,11 @@ export default {
     const formNationality = ref('');
     const formReward = ref('');
     const nationality = ref([]);
+    const emptyFirstName = ref(false);
+    const emptyLastName = ref(false);
+    const emptyNationality = ref(false);
+    const emptyReward = ref(false); 
+    const router = useRouter();
 
     onMounted(async () => {
       try {
@@ -22,17 +28,31 @@ export default {
         console.error(error);
       }
     });
-
-    const closeModalAdd = () => {
+    
+    return {
+      token,
+      formFirstName,
+      formLastName,
+      formNationality,
+      formReward,
+      nationality,
+      emptyFirstName,
+      emptyLastName,
+      emptyNationality,
+      emptyReward,
+      router
+    };
+  },
+  methods: {
+    closeModalAdd() {
       const specificModal = document.querySelector(`.modal-add`);
       const body = document.querySelector(`body`);
       if (specificModal) {
         body.classList.remove('noScroll');
         specificModal.classList.remove('active');
       }
-    };
-
-    const openModalAdd = () => {
+    },
+    openModalAdd() {
       const modals = document.querySelectorAll('.modal');
       const body = document.querySelector(`body`);
 
@@ -45,43 +65,64 @@ export default {
         body.classList.add('noScroll');
         specificModal.classList.add('active');
       }
-    };
-
-    const addActor = async () => {
+    },
+    async addActor() {
       event.preventDefault();
 
+      if (this.formFirstName === '') {
+        this.emptyFirstName = true;
+      } else {
+        this.emptyFirstName = false;
+      }
 
-      console.log("add Actor")
+      if (this.formLastName === '') {
+        this.emptyLastName = true;
+      } else {
+        this.emptyLastName = false;
+      }
+
+      if (this.formNationality === '') {
+        this.emptyNationality = true;
+      } else {
+        this.emptyNationality = false;
+      }
+
+      if (this.formReward === '') {
+        this.emptyReward = true;
+      } else {
+        this.emptyReward = false;
+      }
+
+      if (!this.formFirstName || !this.formLastName || !this.formNationality || !this.formReward) {
+        return;
+      }
 
       try {
         const response = await axios.post(`${urlBase}/api/actors`, {
-          firstName: formFirstName.value,
-          lastName: formLastName.value,
-          nationality: `/WRA506/index.php/api/nationalities/${formNationality.value}`,
-          reward: formReward.value
+          firstName: this.formFirstName,
+          lastName: this.formLastName,
+          nationality: `/MovieProject/Api/WRA506-ApiPlatform-films/public/index.php/api/nationalities/${this.formNationality}`,
+          reward: this.formReward
         }, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         });
+        this.closeModalAdd();
+        this.router.push(`/FicheActor/${response.data.id}`)
       } catch (error) {
-        console.error('Erreur lors de l\'ajout de l\'acteur :', error);
+        if (error.response.statusText === "Unauthorized") {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          this.closeModalAdd();
+          this.router.push(`/login`)
+        } else {
+          console.error('Erreur lors de l\'ajout de l\'acteur :', error);
+        }
       }
-    };
-
-    return {
-      token,
-      formFirstName,
-      formLastName,
-      formNationality,
-      formReward,
-      closeModalAdd,
-      openModalAdd,
-      addActor,
-      nationality,
-    };
-  },
+    }
+  }
 };
 </script>
 
@@ -98,24 +139,29 @@ export default {
             <div class="form-input">
               <label for="firstName">Prénom</label>
               <input type="text" id="firstName" name="firstName" v-model="formFirstName">
+              <span class="error" :class="{ active: emptyFirstName }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="lastName">Nom</label>
               <input type="text" id="lastName" name="lastName" v-model="formLastName">
+              <span class="error" :class="{ active: emptyLastName }">Ce champ est requis</span>
             </div>
             <div class="form-input">
               <label for="director">nationalité</label>
               <div v-if="nationality">
                 <select name="nationality" id="nationality" @change="formNationality = $event.target.value">
+                  <option>--choisir une nationalitée--</option>
                   <option v-for="nation in nationality" :value="nation.id">{{ nation.name }}</option>
                 </select>
+                <span class="error" :class="{ active: emptyNationality }">Ce champ est requis</span>
               </div> 
             </div>
             <div class="form-input">
               <label for="reward">Récompense</label>
               <input type="text" id="reward" name="reward" v-model="formReward">
+              <span class="error" :class="{ active: emptyReward }">Ce champ est requis</span>
             </div>
-            <button @click="addActor()">Ajouter</button>
+            <button @click="addActor()" class="card-button">Ajouter</button>
           </form>
         </template>
         <template v-if="!token">

@@ -1,11 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import ActorCard from '@/components/Card/ActorCard.vue';
-import AddActor from '@/components/entityManager/AddMovie.vue';
+import AddActor from '@/components/entityManager/AddActor.vue';
 import { urlBase } from '@/main.js';
 import axios from 'axios';
-
-console.log(AddActor);
 
 const actors = ref([]);
 const pageNumber = ref(parseInt(localStorage.getItem('actorPageNumber')) || 1);
@@ -59,7 +57,6 @@ const getNumberOfPages = async () => {
   const dernierChiffre = lastPageUrl.value.match(/\d+$/);
   let test = typeof lastPageUrl.value;
   if ((dernierChiffre === undefined) || (dernierChiffre == null) || (dernierChiffre == "undefined")) {
-  // if (test != 'string') {
     numberOfPages.value = 1;
   } else {
     numberOfPages.value = dernierChiffre ? parseInt(dernierChiffre[0], 10) : 0;
@@ -114,12 +111,13 @@ onMounted(() => {
       <div>
         <button @click="AddActor.methods.openModalAdd()">Ajouter un acteur</button>
       </div>
+      <AddActor/>
     </div>
     <ul class="item-listing">
       <div class="loading" v-if="isLoading">
         Chargement...
       </div>
-      <li v-if="!isLoading" class="card" v-for="actor in actors['hydra:member']" :key="actor.id">
+      <li v-if="!isLoading" class="card" v-for="actor in actors['hydra:member']" :key="actor.id" :class="'actorCard-' + actor.id">
         <ActorCard :actor="actor" callerComponent="MoviesView" v-if="actor" />
       </li>
     </ul>
