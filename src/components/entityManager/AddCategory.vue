@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import { onMounted } from 'vue';
 import { urlBase } from '@/main.js';
 import getMovie from '@/components/entityManager/GetMovie.vue';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
@@ -12,11 +13,12 @@ export default {
     const movies = ref([]);
     const emptyCategory = ref(false);
     const emptyMovie = ref(false);
+    const noActors = ref(false);
+    const router = useRouter();
 
     onMounted(async () => {
       try {
         const response = await getMovie.methods.getMovies();
-        // console.log(response);
         movies.value = response['hydra:member'];
       } catch (error) {
         console.error(error);
@@ -29,6 +31,8 @@ export default {
       movies,
       emptyCategory,
       emptyMovie,
+      noActors,
+      router
     };
   },
   methods: {
@@ -40,9 +44,7 @@ export default {
         specificModal.classList.remove('active');
       }
     },
-    openModalAdd() {
-      // console.log('openModalAdd');
-      
+    openModalAdd() {      
       const modals = document.querySelectorAll('.modal');
       const body = document.querySelector(`body`);
 
@@ -64,10 +66,9 @@ export default {
       newSelect.id = 'movie';
       newSelect.className = 'movieSelect';
 
-      // Ajouter une option par défaut "Sélectionner un film"
       const defaultOption = document.createElement('option');
       defaultOption.value = '';
-      defaultOption.text = '--choisir une catégorie--';
+      defaultOption.text = '--choisir un film--';
       newSelect.appendChild(defaultOption);
 
       for (const movie of this.movies) {
@@ -82,7 +83,7 @@ export default {
     removeLastMovieField() {
       const moviesContainer = document.getElementById('moviesContainer');
       const selects = moviesContainer.querySelectorAll('.movieSelect');
-      if (selects.length > 1) {
+      if (selects.length > 0) {
         moviesContainer.removeChild(selects[selects.length - 1]);
       }
     },
@@ -90,14 +91,15 @@ export default {
       const moviesContainer = document.getElementById('moviesContainer');
       const selects = moviesContainer.querySelectorAll('.movieSelect');
       const selectedActorIds = [];
+      this.noActors = false;
 
-      
+      if (selects.length === 0) {
+        this.noActors = true;
+      }
       selects.forEach(select => {
         
-        console.log("select",select.value);
         if (select.value) {
-          console.log("select.value",select.value);
-          selectedActorIds.push(`/WRA506/index.php/api/movies/${select.value}`);
+          selectedActorIds.push(`/MovieProject/Api/WRA506-ApiPlatform-films/public/index.php/api/movies/${select.value}`);
         } else {
           
         }
@@ -116,14 +118,16 @@ export default {
         this.emptyCategory = false;
       }
 
-      if (selectedActorIds.length === 0) {
-        console.log("empty movie");
-        this.emptyMovie = true;
+      if (this.noActors) {
       } else {
-        this.emptyMovie = false;
+        if (selectedActorIds.length === 0) {
+          this.emptyMovie = true;
+        } else {
+          this.emptyMovie = false;
+        }
       }
 
-      if (this.emptyCategory || this.emptyMovie) {
+      if (this.emptyCategory) {
         return;
       }
 
@@ -137,8 +141,16 @@ export default {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         });
+        window.location.reload()
       } catch (error) {
-        console.error('Erreur lors de l\'ajout de la catégorie :', error);
+        if (error.response.statusText === "Unauthorized") {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          this.closeModalAdd();
+          this.router.push(`/login`)
+        } else {
+          console.error('Erreur lors de l\'ajout de la catégorie :', error);
+        }
       }
     }
   }
@@ -163,10 +175,6 @@ export default {
             <div class="form-input">
               <label for="categoryMovies">Ajouter des films</label>
               <div id="moviesContainer" v-if="movies">
-                <select name="categories" id="categoryMovies" @input="updateCategoryNameMovie" class="movieSelect" required>
-                    <option value="">--choisir une catégorie--</option>
-                    <option v-for="movie in movies" :value="movie.id">{{ movie.title }}</option>
-                </select>
                 <span class="error" :class="{ active: emptyMovie }">Ce champ est requis</span>
               </div>
               <div class="little-button-container">
@@ -174,7 +182,7 @@ export default {
                 <button type="button" @click="removeLastMovieField">-</button>
               </div>
             </div>
-            <button type="submit" @click="addCategory()">Ajouter</button>
+            <button type="submit" @click="addCategory()" class="card-button">Ajouter</button>
           </form>
         </template>
         <template v-if="!token">
