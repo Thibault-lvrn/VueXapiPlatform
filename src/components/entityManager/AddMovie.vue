@@ -1,10 +1,11 @@
 <script>
 import axios from 'axios';
-import { handleError, ref } from 'vue';
 import { urlBase } from '@/main.js';
 import GetActors from '@/components/entityManager/GetActors.vue';
 import GetCategory from '@/components/entityManager/GetCategory.vue';
 import { onMounted } from 'vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
@@ -23,8 +24,10 @@ export default {
     const emptyAddWebSite = ref(false);
     const emptyAddImage = ref(false);
     const emptyNotation = ref(false);
+    const emptyActor = ref(false);
     const activeNotation = ref(null);
-    
+    const router = useRouter();
+
     onMounted(async () => {
       try {
         const response = await GetActors.methods.getActors();
@@ -64,8 +67,10 @@ export default {
       emptyAddWebSite,
       emptyAddImage,
       emptyNotation,
+      emptyActor,
       activeNotation,
       updateActiveNotation,
+      router
     };
   },
   methods: {
@@ -78,7 +83,6 @@ export default {
       }
     },
     openModalAdd() {
-      console.log('openModalAdd');
       const modals = document.querySelectorAll('.modal');
       const body = document.querySelector(`body`);
 
@@ -122,7 +126,7 @@ export default {
       const selectedActorIds = [];
 
       selects.forEach(select => {
-        selectedActorIds.push(`/WRA506/index.php/api/actors/${select.value}`);
+        selectedActorIds.push(`/MovieProject/Api/WRA506-ApiPlatform-films/public/index.php/api/actors/${select.value}`);
       });
 
       return selectedActorIds;
@@ -173,6 +177,10 @@ export default {
       this.addImage(this.formImage);
       this.emptyAddImage = false;
     },
+    updateFormAddActor(event) {
+      this.formActor = event.target.value;
+      this.emptyActor = false;
+    },
     async addImage(event) {
       const fileInput = event.target.files[0];
       const myHeaders = {
@@ -189,8 +197,6 @@ export default {
         });
         if (response.data['@id']) {
           this.imageId = response.data['@id'];
-        } else {
-          console.log('L\'ID de l\'image n\'a pas été trouvé dans la réponse.');
         }
       } catch (error) {
         console.error(error);
@@ -229,12 +235,17 @@ export default {
       if (!this.formImage) {
         this.emptyAddImage = true;
       }
-
-      if (!this.formTitle || !this.formDescription || !this.formReleaseDate || !this.formDuration || !this.formCategory) {
-        return;
+      if (!this.formCategory) {
+        this.emptyCategory = true;
+      } else if (this.formCategory === "--choisir une catégorie--") {
+        this.emptyCategory = true;
       }
-
-      if (this.formCategory == '--choisir une catégorie--') {
+      if (!this.formActor) {
+        this.emptyActor = true;
+      } else if (this.formActor === "--choisir un acteur--") {
+        this.emptyActor = true;
+      }
+      if (!this.formTitle || !this.formDescription || !this.formReleaseDate || !this.formDuration || !this.formCategory || !this.formEntries || !this.formBudget || !this.formDirector || !this.formWebSite || !this.formImage || !this.formCategory || !this.formActor || this.emptyCategory || this.emptyActor || this.emptytitle || this.emptyDescription || this.emptyReleaseDate || this.emptyDuration || this.emptyAddEntries || this.emptyAddBudget || this.emptyAddDirector || this.emptyAddWebSite || this.emptyAddImage || this.emptyNotation || this.emptyActor) {
         return;
       }
 
@@ -242,7 +253,7 @@ export default {
 
       try {
         const response = await axios.post(`${urlBase}/api/movies`, {
-          category: `/WRA506/index.php/api/categories/${this.formCategory}`,
+          category: `/MovieProject/Api/WRA506-ApiPlatform-films/public/index.php/api/categories/${this.formCategory}`,
           actor: selectedActorIds,
           title: this.formTitle,
           description: this.formDescription,
@@ -259,9 +270,17 @@ export default {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           }
         });
-        window.location.reload()
+        this.closeModalAdd();
+        this.router.push(`/FicheMovie/${response.data.id}`)
       } catch (error) {
-        console.error('Erreur lors de l\'ajout du film :', error);
+        if (error.response.statusText === "Unauthorized") {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          this.closeModalAdd();
+          this.router.push(`/login`)
+        } else {
+          console.error('Erreur lors de l\'ajout du film :', error);
+        }
       }
     }
   }
@@ -301,7 +320,6 @@ export default {
             <div class="form-input">
               <label for="notation" >Note</label>
               <div class="star-notation-container">
-                <!-- <button v-for="i in 10" :key="i" type="button" class="star-notation" :class="'button-' + i" @click="updateFormAddNotation(i)">{{ i }}</button> -->
                 <button v-for="i in 10" :key="i" type="button" class="star-notation" :class="{ active: activeNotation === i }" @click="updateFormAddNotation(i)">{{ i }}</button>
               </div>
               <span class="error" :class="{ active: emptyNotation }">Ce champ est requis</span>
@@ -324,10 +342,11 @@ export default {
             <div class="form-input">
               <label for="actors">Acteurs</label> 
               <div id="actorsContainer" v-if="actors">
-                <select name="actors" id="actors" class="actorSelect">
+                <select name="actors" id="actors" class="actorSelect" @input="updateFormAddActor">
                   <option>--choisir un acteur--</option>
                   <option v-for="actor in actors" :value="actor.id">{{ actor.firstName }} {{ actor.lastName }}</option>
                 </select>
+                <span class="error" :class="{ active: emptyActor }">Ce champ est requis</span>
               </div>
               <div class="little-button-container">
                 <button type="button" @click="addActorField">+</button>
@@ -341,7 +360,7 @@ export default {
                   <option>--choisir une catégorie--</option>
                   <option v-for="cat in category" :value="cat.id">{{ cat.name }}</option>
                 </select>
-                <!-- <span class="error" :class="{ active: wrongCategory }">Veuillez choisir une catégorie valide</span> -->
+                <span class="error" :class="{ active: emptyCategory }">Ce champ est requis</span>
               </div> 
             </div>
             <div class="form-input">
@@ -352,9 +371,8 @@ export default {
             <div class="form-input">
               <label for="director">Image</label>
               <input type="file" id="director" name="director" @change="addImage">
-              <!-- <span class="error" :class="{ active: emptyAddImage }">Ce champ est requis</span> -->
             </div>
-            <button @click="addMovie()">Ajouter</button>
+            <button class="card-button" @click="addMovie()">Ajouter</button>
           </form>
         </template>
         <template v-if="!token">
