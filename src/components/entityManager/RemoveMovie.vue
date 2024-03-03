@@ -50,10 +50,19 @@ export default {
         headers: headers,
       })
       .then(response => {
-        window.location.reload()
+        const specificMovie = document.querySelector(`.movieCard-${id}`);
+        this.closeModalRemove(id);
+        specificMovie.remove();
       })
       .catch(error => {
-        console.error(error);
+        if (error.response.statusText === "Unauthorized") {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          this.closeModalAdd();
+          this.router.push(`/login`)
+        } else {
+          console.error('Erreur lors de la supréssion du film :', error);
+        }
       });
     },
   },
