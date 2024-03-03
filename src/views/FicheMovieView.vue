@@ -1,50 +1,55 @@
 <script setup>
-import { onMounted } from 'vue'
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { onMounted } from 'vue';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 import { urlBase } from '@/main.js';
-import MovieCard from '@/components/MovieCard.vue';
+import MovieCard from '@/components/Card/MovieCard.vue';
 
-const route = useRoute()
-let filmInfo = ref('')
+const route = useRoute();
+let movieInfo = ref('');
 
 onMounted(async () => {
-  const id = route.params.id
-  console.log(id)
-  const response = await fetch(`${urlBase}/S5-TD1/index.php/api/movies/${id}`);
-  filmInfo.value = await response.json()
-  console.log(filmInfo)
-})
+  const id = route.params.id;
+  try {
+    const response = await axios.get(`${urlBase}/api/movies/${id}`);
+    movieInfo.value = response.data;
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
+
 <template>
-  <div class="about">
-    <h1>This is the info page</h1>
-  </div>
+  <h1>Movie page</h1>
 
-  <div class="actors">
-    <h2>Hello Movies</h2>
-    <div v-if="filmInfo">
-      <MovieCard :film="filmInfo" v-if="filmInfo" />
-      
-      <h3>La Catégorie du film : </h3>
-      <p>{{ filmInfo.category.name }}</p>
-
-      <h3>Les Acteurs du film : </h3>
-      <ul v-for="actor in filmInfo.Actors" :key="film">
-        <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
-          <li>
-            {{ actor.firstName }}
-            {{ actor.lastName }}
-          </li>
-        </router-link>
-      </ul>
-      
-      <!-- <router-link :to="{ name: 'FicheMovie', params: { id: 201 } }">
-        <li>
-          bonjour
-        </li>
-      </router-link> -->
+  <div class="movies">
+    <div v-if="movieInfo">      
+      <div style="display: flex; justify-content: center; flex-direction: row; align-items: center; gap: 2rem;">
+        <div>
+          <img v-if="movieInfo.file[0]" :src="'http://89.234.182.9/MovieProject/Api/WRA506-ApiPlatform-films/public/uploads/' + movieInfo.file[0]['filePath']" :alt="movieInfo.title" width="300">
+        </div>
+        <div style="margin-top: 30px;">
+          <h3 style="text-align: left; font-weight: 700;">{{ movieInfo.title }}</h3>
+          <p v-if="movieInfo.description"><span style="text-transform: uppercase; font-weight: 700;">Description : </span> {{ movieInfo.description }}</p>
+          <p v-if="movieInfo.releaseDate"><span style="text-transform: uppercase; font-weight: 700;">Date de sortie :</span> {{ movieInfo.releaseDate }}</p>
+          <p v-if="movieInfo.duration"><span style="text-transform: uppercase; font-weight: 700;">Durée :</span> {{ movieInfo.duration }} minutes</p>
+          <p v-if="movieInfo.note"><span style="text-transform: uppercase; font-weight: 700;">Note : </span>{{ movieInfo.note }} étoiles</p>
+          <p v-if="movieInfo.category"><span style="text-transform: uppercase; font-weight: 700;">La Catégorie du film :</span> <router-link :to="{ name: 'FicheCategory', params: { id: movieInfo.category.id } }">{{ movieInfo.category.name }}</router-link></p>
+          <div v-if="movieInfo.actor">
+            <span style="text-transform: uppercase; font-weight: 700;">Distribution : </span>
+            <ul class="list">
+              <li v-for="actor in movieInfo.actor" :key="movie">
+                  <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+                    {{ actor.firstName }}
+                    {{ actor.lastName }}
+                  </router-link>
+                </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

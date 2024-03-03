@@ -1,0 +1,24 @@
+button {
+  background-color: hsla(160, 100%, 37%, 1);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+button:not(.pagination_btn, .gesture) {
+  width: 100%;
+}
+
+button:not(.pagination_btn, .gesture, .card-button) {
+  max-width: 200px;
+}
+
+
+button.secondary {
+  background-color: transparent;
+  border: 2px solid hsla(160, 100%, 37%, 1);
+  color: white;
+}
