@@ -51,7 +51,6 @@ const getNumberOfPages = async () => {
   const dernierChiffre = lastPageUrl.value.match(/\d+$/);
   let test = typeof lastPageUrl.value;
   if ((dernierChiffre === undefined) || (dernierChiffre == null) || (dernierChiffre == "undefined")) {
-  // if (test != 'string') {
     numberOfPages.value = 1;
   } else {
     numberOfPages.value = dernierChiffre ? parseInt(dernierChiffre[0], 10) : 0;
@@ -85,14 +84,13 @@ onMounted(() => {
 const uploadFile = async (file) => {
   const headers = {
     'Content-Type': 'multipart/form-data',
-    'Cookie': 'sf_redirect=%7B%22token%22%3A%22b9f283%22%2C%22route%22%3A%22_api_%5C%2Fmedia_objects%7B._format%7D_post%22%2C%22method%22%3A%22POST%22%2C%22controller%22%3A%22App%5C%5CController%5C%5CCreateMediaObjectAction%22%2C%22status_code%22%3A201%2C%22status_text%22%3A%22Created%22%7D',
   };
 
   const formData = new FormData();
   formData.append('file', file, 'banner_linkedin_EN.jpg');
 
   try {
-    const response = await axios.post('http://localhost:8088/WRA506/index.php/api/media_objects', formData, {
+    const response = await axios.post(`${urlBase}/api/media_objects`, formData, {
       headers: headers,
     });
   } catch (error) {
@@ -123,6 +121,7 @@ const uploadFile = async (file) => {
         <div>
           <button @click="AddMovie.methods.openModalAdd()">Ajouter un film</button>
         </div>
+        <AddMovie/>
       </div>
     </div>
 
@@ -131,7 +130,7 @@ const uploadFile = async (file) => {
       <div class="loading" v-if="isLoading">
         Chargement...
       </div>
-      <li class="card card-movie" v-if="!isLoading" v-for="movie in movies['hydra:member']" :key="movie.id">
+      <li class="card card-movie" :class="'movieCard-' + movie.id" v-if="!isLoading" v-for="movie in movies['hydra:member']" :key="movie.id">
         <MovieCard :movie="movie" callerComponent="MoviesView" v-if="movie"/>
       </li>
     </ul>

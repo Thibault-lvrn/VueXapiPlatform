@@ -1,16 +1,5 @@
 <script setup>
 import { urlBase } from '@/main.js';
-// const mediaObjects = ref([]);
-
-// const fetchMediaObjects = async () => {
-//   try {
-//     const response = await axios.get(`${urlBase}/api/media_objects`);
-//     mediaObjects.value = response.data['hydra:member'];
-//     console.log('mediaObjects:', mediaObjects.value);
-//   } catch (error) {
-//     console.error('Erreur lors de la récupération des médias:', error);
-//   }
-// };
 </script>
 <script>
 import { urlBase } from '@/main.js';
@@ -95,10 +84,6 @@ export default {
         data.releaseDate = releaseDate;
       }
 
-      // if (selectedImage !== null) {
-      //   data.file = [selectedImage];
-      // }
-
       const requestOptions = {
         method: 'patch',
         url: `${urlBase}/api/movies/${id}`,
@@ -108,11 +93,16 @@ export default {
 
       try {
         const response = await axios(requestOptions);
-
         window.location.reload()
-
       } catch (error) {
-        console.error(error);
+        if (error.response.statusText === "Unauthorized") {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          this.closeModalAdd();
+          this.router.push(`/login`)
+        } else {
+          console.error('Erreur lors de la modification du film :', error);
+        }
       }
     },
   },
@@ -142,15 +132,7 @@ export default {
               <label for="releaseDate" >Date de sortie</label>
               <input type="date" id="releaseDate" name="releaseDate" :value="DateFormatter.methods.formatDateEN(movie.releaseDate)" @input="updateFormReleaseDate">
             </div>
-            <!-- <div class="form-input">
-              <label for="image">Image</label>
-              <select id="image" name="image" v-model="selectedImage">
-                <option v-for="media in mediaObjects" :key="media['@id']" :value="media['@id']">
-                  {{ media.filePath }}
-                </option>
-              </select>
-            </div> -->
-            <button @click="submitForm(movie.id)">Modifier</button>
+            <button @click="submitForm(movie.id)" class="card-button">Modifier</button>
           </form>
         </template>
         <template v-if="!token">
