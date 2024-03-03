@@ -9,7 +9,7 @@ export default ({ mode }) => {
   const base = mode === "production" ? "./vue-project/" : "./";
 
   return defineConfig({
-    base: 'MovieProject/vue-project',
+    base: '/MovieProject/vue-project',
     plugins: [vue()],
     resolve: {
       alias: {

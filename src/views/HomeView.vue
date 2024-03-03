@@ -64,8 +64,8 @@ onMounted(() => {
 
   <div class="movies">
     <h2>Movies</h2>
-    <ul>
-      <div v-if="isLoading">
+    <ul class="item-listing">
+      <div class="loading" v-if="isLoading">
         Chargement...
       </div>
       <li class="card card-movie" v-for="movie in movies" :key="movie.id">
@@ -76,21 +76,12 @@ onMounted(() => {
 
   <div class="actors">
     <h2>Actors</h2>
-    <ul>
-      <div v-if="isLoading">
+    <ul class="item-listing">
+      <div class="loading" v-if="isLoading">
         Chargement...
       </div>
       <li v-if="!isLoading" class="card" v-for="actor in actors" :key="actor.id">
-        <div class="card-content">
           <ActorCard :actor="actor" v-if="actor" />
-          <div class="card-footer">
-            <button>
-              <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
-                Voir plus
-              </router-link>
-            </button>
-          </div>
-        </div>
       </li>
     </ul>
   </div>
