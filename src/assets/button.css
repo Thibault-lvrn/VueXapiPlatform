@@ -12,6 +12,10 @@ button:not(.pagination_btn, .gesture) {
   width: 100%;
 }
 
+button:not(.pagination_btn, .gesture, .card-button) {
+  max-width: 200px;
+}
+
 
 button.secondary {
   background-color: transparent;
