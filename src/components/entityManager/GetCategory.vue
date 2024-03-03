@@ -4,14 +4,14 @@ import { urlBase } from '@/main.js';
 
 export default {
   methods: {
-    getActors() {
+    getCategory() {
       const config = {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('token'),
         }
       };
 
-      return axios.get(`${urlBase}/api/actors`, config)
+      return axios.get(`${urlBase}/api/categories`, config)
         .then(response => {
           return response.data;
         })
