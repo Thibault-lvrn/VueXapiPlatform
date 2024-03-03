@@ -1,7 +1,6 @@
 <script>
 import { urlBase } from '@/main.js';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
 
 export default {
   props: {
@@ -50,10 +49,19 @@ export default {
         headers: headers,
       })
       .then(response => {
-        window.location.reload()
+        const specificActor = document.querySelector(`.actorCard-${id}`);
+        this.closeModalRemove(id);
+        specificActor.remove();
       })
       .catch(error => {
-        console.error(error);
+        if (error.response.statusText === "Unauthorized") {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          this.closeModalAdd();
+          this.router.push(`/login`)
+        } else {
+          console.error('Erreur lors de la supréssion de l\'acteur :', error);
+        }
       });
     },
   },
@@ -68,7 +76,7 @@ export default {
       </div>
       <div class="modal-body">
         <template v-if="token">
-          <p>Etes vous sûr de vouloir supprimer le film</p>
+          <p>Etes vous sûr de vouloir supprimer l'acteur</p>
           <div class="btns">
             <button @click="deleteactor(actorId)">Oui</button>
             <button @click="closeModalRemove(actorId)">Non</button>
