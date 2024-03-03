@@ -41,24 +41,26 @@ fetchActors();
     <h1>This is the Home page</h1>
   </div>
 
-  <div class="actors">
-    <h2>Latest Movies</h2>
-    <ul>
-      <li v-for="film in films" :key="film.id">
-        <router-link :to="{ name: 'FicheMovie', params: { id: film.id } }">
-          <MovieCard :film="film" v-if="film" />
-        </router-link>
+  <div class="movies">
+    <h2>Movies</h2>
+    <ul class="item-listing">
+      <div class="loading" v-if="isLoading">
+        Chargement...
+      </div>
+      <li class="card card-movie" v-for="movie in movies" :key="movie.id">
+          <MovieCard :movie="movie" callerComponent="HomeView" v-if="movie" />
       </li>
     </ul>
   </div>
 
   <div class="actors">
     <h2>Actors</h2>
-    <ul>
-      <li v-for="actor in actors" :key="actor.id">
-        <router-link :to="{ name: 'FicheActor', params: { id: actor.id } }">
+    <ul class="item-listing">
+      <div class="loading" v-if="isLoading">
+        Chargement...
+      </div>
+      <li v-if="!isLoading" class="card" v-for="actor in actors" :key="actor.id">
           <ActorCard :actor="actor" v-if="actor" />
-        </router-link>
       </li>
     </ul>
   </div>
