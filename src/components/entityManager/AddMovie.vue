@@ -199,7 +199,14 @@ export default {
           this.imageId = response.data['@id'];
         }
       } catch (error) {
-        console.error(error);
+        if (error.response.statusText === "Unauthorized") {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          this.closeModalAdd();
+          this.router.push(`/login`)
+        } else {
+          console.error('Erreur lors de l\'ajout de l\'image :', error);
+        }
       }
     },
     async addMovie() {
@@ -219,6 +226,8 @@ export default {
       }
       if (!this.formCategory) {
         this.emptyCategory = true;
+      } else if (this.formCategory === "--choisir une catégorie--") {
+        this.emptyCategory = true;
       }
       if (!this.formEntries) {
         this.emptyAddEntries = true;
@@ -232,22 +241,21 @@ export default {
       if (!this.formWebSite) {
         this.emptyAddWebSite = true;
       }
-      if (!this.formImage) {
+      if (!this.imageId) {
         this.emptyAddImage = true;
       }
-      if (!this.formCategory) {
-        this.emptyCategory = true;
-      } else if (this.formCategory === "--choisir une catégorie--") {
-        this.emptyCategory = true;
+      if (!this.formNotation) {
+        this.emptyNotation = true;
       }
       if (!this.formActor) {
         this.emptyActor = true;
       } else if (this.formActor === "--choisir un acteur--") {
         this.emptyActor = true;
       }
-      if (!this.formTitle || !this.formDescription || !this.formReleaseDate || !this.formDuration || !this.formCategory || !this.formEntries || !this.formBudget || !this.formDirector || !this.formWebSite || !this.formImage || !this.formCategory || !this.formActor || this.emptyCategory || this.emptyActor || this.emptytitle || this.emptyDescription || this.emptyReleaseDate || this.emptyDuration || this.emptyAddEntries || this.emptyAddBudget || this.emptyAddDirector || this.emptyAddWebSite || this.emptyAddImage || this.emptyNotation || this.emptyActor) {
+      if (this.emptytitle || this.emptyDescription || this.emptyReleaseDate || this.emptyDuration || this.emptyCategory || this.emptyAddEntries || this.emptyAddBudget || this.emptyAddDirector || this.emptyAddWebSite || this.emptyAddImage || this.emptyNotation || this.emptyActor ) {
         return;
       }
+
 
       const selectedActorIds = this.getSelectedActorsIds();
 
@@ -264,6 +272,9 @@ export default {
           budget: parseInt(this.formBudget),
           director: this.formDirector,
           website: this.formWebSite,
+          file: [
+            this.imageId
+          ]
         }, {
           headers: {
             'Content-Type': 'application/json',

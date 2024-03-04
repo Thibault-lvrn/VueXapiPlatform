@@ -5,13 +5,7 @@ import { urlBase } from '@/main.js';
 export default {
   methods: {
     getCategory() {
-      const config = {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
-        }
-      };
-
-      return axios.get(`${urlBase}/api/categories`, config)
+      return axios.get(`${urlBase}/api/categories`)
         .then(response => {
           return response.data;
         })
