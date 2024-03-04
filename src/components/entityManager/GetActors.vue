@@ -5,13 +5,7 @@ import { urlBase } from '@/main.js';
 export default {
   methods: {
     getActors() {
-      const config = {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
-        }
-      };
-
-      return axios.get(`${urlBase}/api/actors`, config)
+      return axios.get(`${urlBase}/api/actors`)
         .then(response => {
           return response.data;
         })

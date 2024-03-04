@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue';
 import MovieCard from '@/components/Card/MovieCard.vue';
 import ActorCard from '@/components/Card/ActorCard.vue';
 import { urlBase } from '@/main.js';
-import moment from 'moment';
 
 const movies = ref([]);
 const actors = ref([]);
