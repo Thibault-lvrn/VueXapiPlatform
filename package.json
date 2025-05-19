@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.7.2",
-    "vue": "^3.3.7",
+    "vue": "^3.5.14",
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
